@@ -9,6 +9,9 @@
       {% if user.es_mesero or user.es_administrador %}
       <a class="menu__enlace {% if seccion == 'gestion_menu' %}menu__enlace--activo{% endif %}" href="{% url 'menu:plato_lista' %}">Gestión del menú</a>
       {% endif %}
+      {% if user.es_personal %}
+      <a class="menu__enlace {% if seccion == 'caja' %}menu__enlace--activo{% endif %}" href="{% url 'caja:resumen' %}">Caja</a>
+      {% endif %}
       {% if user.es_administrador %}
       <a class="menu__enlace {% if seccion == 'usuarios' %}menu__enlace--activo{% endif %}" href="{% url 'usuarios:lista' %}">Usuarios</a>
       {% endif %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block titulo %}Reporte de ventas · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Reporte de ventas</h1>
+    <a class="boton" href="{% url 'caja:resumen' %}">Caja de hoy</a>
+  </div>
+
+  <form class="filtros" method="get" novalidate>
+    {% for campo in formulario %}
+    <div class="campo {% if campo.errors %}campo--error{% endif %}">
+      <label class="campo__etiqueta" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="boton" type="submit">Consultar</button>
+  </form>
+
+  {% if desde %}
+  <div class="indicadores">
+    <article class="indicador"><span class="indicador__etiqueta">Ventas del período</span><strong class="indicador__valor">$ {{ total|floatformat:"-2" }}</strong></article>
+    <article class="indicador"><span class="indicador__etiqueta">Facturas</span><strong class="indicador__valor">{{ facturas }}</strong></article>
+    <article class="indicador"><span class="indicador__etiqueta">Ticket promedio</span><strong class="indicador__valor">$ {{ ticket_promedio|floatformat:"-2" }}</strong></article>
+  </div>
+
+  <h2 class="titulo-seccion">Ventas por día <span class="titulo-seccion__linea"></span></h2>
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Día</th><th>Facturas</th><th>Ventas</th></tr></thead>
+      <tbody>
+      {% for dia in dias %}
+        <tr><td>{{ dia.dia|date:"d/m/Y" }}</td><td>{{ dia.facturas }}</td><td>$ {{ dia.total|floatformat:"-2" }}</td></tr>
+      {% empty %}
+        <tr><td colspan="3" class="tabla__vacia">No hubo ventas en este período.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="titulo-seccion">Platos más vendidos <span class="titulo-seccion__linea"></span></h2>
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Plato</th><th>Unidades</th><th>Ingresos</th></tr></thead>
+      <tbody>
+      {% for plato in platos %}
+        <tr><td>{{ plato.plato__nombre }}</td><td>{{ plato.unidades }}</td><td>$ {{ plato.ingresos|floatformat:"-2" }}</td></tr>
+      {% empty %}
+        <tr><td colspan="3" class="tabla__vacia">Sin datos.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

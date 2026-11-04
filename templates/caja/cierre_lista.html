@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Cierres de caja · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Cierres de caja</h1>
+    <div class="acciones">
+      <a class="boton" href="{% url 'caja:resumen' %}">Caja de hoy</a>
+      <a class="boton" href="{% url 'caja:cierre_nuevo' %}">Cerrar caja</a>
+    </div>
+  </div>
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Fecha</th><th>Facturas</th><th>Ventas</th><th>Efectivo contado</th><th>Diferencia</th><th>Resultado</th><th>Cerrado por</th></tr></thead>
+      <tbody>
+      {% for cierre in cierres %}
+        <tr>
+          <td>{{ cierre.fecha|date:"d/m/Y" }}</td>
+          <td>{{ cierre.numero_facturas }}</td>
+          <td>$ {{ cierre.total_ventas|floatformat:"-2" }}</td>
+          <td>$ {{ cierre.efectivo_contado|floatformat:"-2" }}</td>
+          <td>$ {{ cierre.diferencia|floatformat:"-2" }}</td>
+          <td><span class="etiqueta {% if cierre.diferencia == 0 %}etiqueta--ok{% else %}etiqueta--no{% endif %}">{{ cierre.resultado }}</span></td>
+          <td>{{ cierre.cerrado_por.nombre_completo }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="tabla__vacia">Aún no hay cierres de caja.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

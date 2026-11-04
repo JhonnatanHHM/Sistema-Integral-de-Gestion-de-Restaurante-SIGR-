@@ -24,6 +24,7 @@
 </div>
 
 <div class="acciones acciones--pedido">
+  {% if pedido.factura %}<a class="boton" href="{% url 'caja:factura' pedido.factura.pk %}">Ver factura {{ pedido.factura.numero }}</a>{% endif %}
   {% if pedido.siguiente_estado and user.es_personal %}
   <form method="post" action="{% url 'pedidos:avanzar' pedido.pk %}">{% csrf_token %}
     <input type="hidden" name="desde" value="{{ pedido.estado }}">
