@@ -6,6 +6,18 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.5.0] - 2026-11-04
+
+### Añadido
+- App `reservas` con el modelo `Reserva` (fecha, hora, personas, mesa, notas y estado).
+- Reglas de negocio centralizadas: franjas de 11:00 a 20:00 cada 30 minutos, duración de 2 horas, anticipación mínima de 1 hora y máxima de 30 días, hasta 12 personas.
+- Bloqueo de cruces: una mesa no se reserva si ya hay una reserva vigente a menos de 2 horas de diferencia (el borde exacto es válido) y un cliente no puede tener dos reservas cruzadas. La verificación se repite dentro de la transacción, con bloqueo en PostgreSQL.
+- El cliente crea y cancela sus reservas; el personal ve todas, las confirma, las marca como completadas o las cancela. El cliente y el estado nunca se aceptan desde el formulario.
+- Flujo Pendiente → Confirmada → Completada, con cancelación mientras esté vigente; una reserva cancelada libera la mesa.
+- Listado con filtros por estado, fecha y mesa, paginación y actualización automática.
+- Validación estricta: fecha solo en formato ISO (AAAA-MM-DD), hora solo entre las franjas permitidas, personas y mesa numéricas dentro de su rango, y notas sin `< >`.
+- 44 pruebas nuevas, con el reloj fijo: formatos de fecha y hora inválidos, límites de anticipación, cruces y bordes, inyección SQL en filtros, permisos y acciones con pantalla desactualizada.
+
 ## [0.4.0] - 2026-11-04
 
 ### Añadido
