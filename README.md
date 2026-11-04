@@ -38,6 +38,12 @@ Abre http://127.0.0.1:8000/.
 Las cuentas usan correo y contraseña. Roles: **cliente** (se crea desde `/cuentas/registro/`), **mesero** y **administrador**. El primer administrador se crea con `createsuperuser`; después, desde `/cuentas/usuarios/`, el administrador da de alta al personal.
 Los permisos de las vistas se manejan con mixins de `apps/usuarios/mixins.py`.
 
+### Menú digital
+La carta pública está en `/menu/`. El personal gestiona los platos en `/menu/gestion/platos/` (el mesero marca disponibilidad; el administrador además crea, edita y elimina platos y categorías). Para cargar datos de ejemplo:
+```powershell
+.venv\Scripts\python manage.py cargar_menu_demo
+```
+
 ### Estilos
 ```powershell
 .venv\Scripts\python manage.py compilar_scss          # compila una vez

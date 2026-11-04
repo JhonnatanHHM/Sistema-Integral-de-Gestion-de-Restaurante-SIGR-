@@ -6,6 +6,21 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-04
+
+### Añadido
+- App `menu` con los modelos `Categoria` y `Plato` (nombre único sin distinguir mayúsculas, precio con rango, disponibilidad).
+- Menú digital público con búsqueda y filtro por categoría; solo muestra platos disponibles de categorías activas.
+- Gestión de platos para el personal: listado con filtros y paginación; el mesero puede marcar platos como disponibles o agotados; el administrador crea, edita y elimina.
+- Gestión de categorías para el administrador; no se elimina una categoría que tiene platos.
+- App `comun` con utilidades compartidas: `MontoField` (solo dígitos, hasta 2 decimales, positivo, máximo 9 dígitos), validadores de nombres y textos, y paginación que conserva los filtros.
+- Comando `cargar_menu_demo` para cargar un menú de ejemplo.
+- Estilos de la carta, etiquetas de estado y acciones de tabla.
+- 31 pruebas nuevas: precios y textos mal formados, categorías manipuladas, inyección SQL y HTML en búsquedas, y acceso por rol.
+
+### Cambiado
+- `limpiar_espacios` pasa a `apps/comun/validators.py` y se reutiliza desde `usuarios`.
+
 ## [0.2.0] - 2026-11-04
 
 ### Añadido
