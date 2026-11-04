@@ -46,6 +46,7 @@ Navegador ──► Vistas (CBV + mixins de permisos) ──► Formularios (val
 │   ├── scss/                  código fuente de los estilos
 │   ├── css/sigr.css           CSS compilado (se versiona)
 │   └── js/tiempo-real.js      refresco automático de pantallas
+├── media/                     fotos de los platos subidas (no se versiona)
 ├── docs/                      documentación técnica
 └── .github/                   plantillas de PR e Issues y flujos de GitHub Actions
 ```
@@ -65,7 +66,8 @@ Cada app sigue la misma forma: `models.py`, `forms.py`, `views.py`, `urls.py`, `
 2. **Sin SQL armado a mano.** Solo ORM con parámetros. Los buscadores validan primero con un formulario; si la entrada no es válida devuelven una lista vacía.
 3. **Permisos con mixins.** Toda vista protegida usa `LoginRequiredMixin` o los mixins por rol (`ClienteRequeridoMixin`, `PersonalRequeridoMixin`, `AdministradorRequeridoMixin`). Sin sesión se redirige al ingreso; con el rol equivocado se responde 403; los datos ajenos responden 404.
 4. **Nunca confiar en el navegador** para precios, estados, roles o dueños de un registro: se calculan en el servidor.
-5. **Acciones que cambian datos solo por POST**, con token CSRF. Los botones que cambian un estado envían el estado que el usuario veía, para evitar saltos por pantallas desactualizadas.
+5. **Archivos subidos validados por su contenido.** Las fotos de platos solo aceptan JPG, PNG o WebP reales (se abren con Pillow y su formato debe coincidir con la extensión), de hasta 2 MB y 4000 px por lado; SVG y cualquier otro formato se rechazan, y el archivo se guarda con un nombre aleatorio (`validar_imagen` en `apps/comun/validators.py`).
+6. **Acciones que cambian datos solo por POST**, con token CSRF. Los botones que cambian un estado envían el estado que el usuario veía, para evitar saltos por pantallas desactualizadas.
 
 ### Pruebas
 - Cada módulo tiene pruebas de modelo, de formularios (incluidas entradas mal formadas y maliciosas) y de vistas (incluidos los permisos por rol).

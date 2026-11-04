@@ -6,6 +6,21 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.1.0] - 2026-11-04
+
+### Añadido
+- Fotos de los platos: el administrador las sube al crear o editar un plato. Se aceptan JPG, PNG o WebP reales de hasta 2 MB y 4000 px por lado; el contenido se verifica con Pillow y debe coincidir con la extensión, SVG y otros formatos se rechazan, y el archivo se guarda con un nombre aleatorio. La foto reemplazada o la del plato eliminado se borran del disco.
+- Marca «destacado» en el plato para elegir qué platos se muestran en el inicio.
+- Servicio de fotos en desarrollo (`/media/`) y configuración de nginx en el manual de despliegue.
+- Dependencia `Pillow`.
+- 31 pruebas nuevas (243 en total): archivos falsos y peligrosos, límites de peso y dimensiones, limpieza de archivos, permisos y contenido del inicio por rol.
+
+### Cambiado
+- Inicio rediseñado: portada de bienvenida más general, sección de platos destacados con foto (o un marcador con la inicial) y horarios e información útil. Se eliminaron las tarjetas de módulos internos.
+- Los accesos de la portada dependen del rol: el visitante ve menú, registro e ingreso; el cliente, menú, pedido y reserva; el personal, su trabajo; y solo el administrador ve usuarios.
+- La carta pública muestra una miniatura junto a los platos que tienen foto.
+- Las copias de seguridad deben incluir la carpeta `media/` (documentado).
+
 ## [1.0.0] - 2026-11-04
 
 **Línea base del código fuente del Sistema Integral de Gestión de Restaurante (SIGR).** Primer hito estable del proyecto: a partir de aquí, todo cambio se gestiona como una solicitud de cambio y se publica con una versión nueva.
