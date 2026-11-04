@@ -50,6 +50,9 @@ Cualquier usuario con sesión crea un pedido en `/pedidos/nuevo/` (mesa y cantid
 ### Reservas
 El cliente reserva en `/reservas/nueva/`: fecha, hora (franjas de 30 minutos entre 11:00 y 20:00), personas (1 a 12) y mesa (1 a 99). Cada reserva ocupa la mesa 2 horas y se admite con entre 1 hora y 30 días de anticipación; el sistema impide cruces. El mesero y el administrador ven todas las reservas, las confirman, las completan o las cancelan. Las reglas están en `apps/reservas/reglas.py`.
 
+### Caja, facturas y reportes
+Al pasar un pedido a **Cerrado** se emite su factura (`F-000001`…). En `/caja/` el mesero ve el total de ventas del día; el administrador además cierra la caja (`/caja/cierre/nuevo/`: efectivo contado frente a ventas facturadas, sin reabrir), consulta facturas y cierres, y genera reportes de ventas por rango de fechas (`/caja/reportes/`) con los platos más vendidos. No hay impuestos: el total de la factura es la suma de los platos.
+
 ### Estilos
 ```powershell
 .venv\Scripts\python manage.py compilar_scss          # compila una vez
