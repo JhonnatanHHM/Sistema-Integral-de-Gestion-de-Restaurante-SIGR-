@@ -3,6 +3,8 @@ import re
 
 from django.core.validators import RegexValidator
 
+from apps.comun.validators import limpiar_espacios  # noqa: F401  (se reexporta para los formularios)
+
 validar_nombre = RegexValidator(
     regex=r"^[^\W\d_]+(?:[ '\-][^\W\d_]+)*$",
     message="Solo se permiten letras, espacios, guion o apóstrofo.",
@@ -14,11 +16,6 @@ validar_telefono = RegexValidator(
     message="Ingresa un teléfono válido: de 7 a 15 dígitos, con + opcional al inicio.",
     code="telefono_invalido",
 )
-
-
-def limpiar_espacios(valor):
-    """Quita espacios al inicio y al final y colapsa los espacios repetidos."""
-    return " ".join((valor or "").split())
 
 
 def normalizar_telefono(valor):

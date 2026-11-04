@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block titulo %}Gestión de platos · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Platos</h1>
+    {% if user.es_administrador %}
+    <div class="acciones">
+      <a class="boton" href="{% url 'menu:categoria_lista' %}">Categorías</a>
+      <a class="boton" href="{% url 'menu:plato_nuevo' %}">Nuevo plato</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <form class="filtros" method="get" novalidate>
+    {% for campo in formulario %}
+    <div class="campo {% if campo.errors %}campo--error{% endif %}">
+      <label class="campo__etiqueta" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="boton" type="submit">Filtrar</button>
+  </form>
+
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Plato</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for plato in platos %}
+        <tr>
+          <td>{{ plato.nombre }}</td>
+          <td>{{ plato.categoria.nombre }}</td>
+          <td>$ {{ plato.precio|floatformat:"-2" }}</td>
+          <td><span class="etiqueta {% if plato.disponible %}etiqueta--ok{% else %}etiqueta--no{% endif %}">{% if plato.disponible %}Disponible{% else %}Agotado{% endif %}</span></td>
+          <td class="tabla__acciones">
+            <form method="post" action="{% url 'menu:plato_disponibilidad' plato.pk %}">{% csrf_token %}<button class="enlace-boton" type="submit">{% if plato.disponible %}Marcar agotado{% else %}Marcar disponible{% endif %}</button></form>
+            {% if user.es_administrador %}
+            <a href="{% url 'menu:plato_editar' plato.pk %}">Editar</a>
+            <a href="{% url 'menu:plato_eliminar' plato.pk %}">Eliminar</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="tabla__vacia">No hay platos que coincidan.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <nav class="paginador" aria-label="Paginación">
+    {% if page_obj.has_previous %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">← Anterior</a>{% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente →</a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}

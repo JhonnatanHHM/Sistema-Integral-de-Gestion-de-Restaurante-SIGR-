@@ -2,7 +2,11 @@
   <a class="marca" href="{% url 'inicio' %}"><span class="marca__icono">✕</span> SIGR</a>
   <nav class="menu" aria-label="Principal">
     <a class="menu__enlace {% if seccion == 'inicio' %}menu__enlace--activo{% endif %}" href="{% url 'inicio' %}">Inicio</a>
+    <a class="menu__enlace {% if seccion == 'menu' %}menu__enlace--activo{% endif %}" href="{% url 'menu:publico' %}">Menú</a>
     {% if user.is_authenticated %}
+      {% if user.es_mesero or user.es_administrador %}
+      <a class="menu__enlace {% if seccion == 'gestion_menu' %}menu__enlace--activo{% endif %}" href="{% url 'menu:plato_lista' %}">Gestión del menú</a>
+      {% endif %}
       {% if user.es_administrador %}
       <a class="menu__enlace {% if seccion == 'usuarios' %}menu__enlace--activo{% endif %}" href="{% url 'usuarios:lista' %}">Usuarios</a>
       {% endif %}
