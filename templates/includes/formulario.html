@@ -1,0 +1,11 @@
+{% if form.non_field_errors %}
+<div class="formulario__errores">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+{% endif %}
+{% for campo in form %}
+<div class="campo {% if campo.errors %}campo--error{% endif %}">
+  <label class="campo__etiqueta" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+  {{ campo }}
+  {% if campo.help_text %}<div class="campo__ayuda">{{ campo.help_text|safe }}</div>{% endif %}
+  {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+</div>
+{% endfor %}

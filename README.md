@@ -34,6 +34,10 @@ python -m venv .venv
 ```
 Abre http://127.0.0.1:8000/.
 
+### Roles y acceso
+Las cuentas usan correo y contraseña. Roles: **cliente** (se crea desde `/cuentas/registro/`), **mesero** y **administrador**. El primer administrador se crea con `createsuperuser`; después, desde `/cuentas/usuarios/`, el administrador da de alta al personal.
+Los permisos de las vistas se manejan con mixins de `apps/usuarios/mixins.py`.
+
 ### Estilos
 ```powershell
 .venv\Scripts\python manage.py compilar_scss          # compila una vez
