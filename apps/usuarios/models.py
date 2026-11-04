@@ -82,5 +82,10 @@ class Usuario(AbstractUser):
         return self.rol == Rol.MESERO
 
     @property
+    def es_personal(self):
+        """Personal del restaurante: meseros y administradores."""
+        return self.rol in (Rol.MESERO, Rol.ADMINISTRADOR)
+
+    @property
     def es_administrador(self):
         return self.rol == Rol.ADMINISTRADOR

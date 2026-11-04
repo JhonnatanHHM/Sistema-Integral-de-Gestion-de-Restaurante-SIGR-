@@ -6,6 +6,22 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-04
+
+### Añadido
+- App `pedidos` con los modelos `Pedido` e `ItemPedido`; el precio de cada ítem se congela al crear el pedido.
+- Creación de pedidos desde la carta: el cliente crea el suyo y el mesero registra pedidos de mesa. Mesa entre 1 y 99, cantidades entre 1 y 50 y notas validadas; los precios nunca se reciben del navegador.
+- Flujo de estados Pendiente → En preparación → Listo → Servido → Cerrado, con cancelación solo mientras está pendiente.
+- Seguimiento con línea de tiempo y actualización automática cada pocos segundos (sin recargar la página).
+- Listado con filtros por estado y mesa y paginación; el cliente solo ve sus pedidos (los ajenos responden 404) y el personal ve todos.
+- Protección contra doble avance: el botón envía el estado que el usuario veía y el pedido se bloquea durante el cambio.
+- Propiedad `es_personal` en `Usuario` y constantes de mesa compartidas en `apps/comun`.
+- 38 pruebas nuevas: estados, validación de mesa, cantidades y notas, visibilidad por rol, filtros con inyección SQL y cambios de estado concurrentes.
+
+### Cambiado
+- Un plato con pedidos asociados ya no se puede eliminar; se muestra un aviso para marcarlo como agotado.
+- El paginador conserva los filtros y omite el parámetro de refresco parcial.
+
 ## [0.3.0] - 2026-11-04
 
 ### Añadido

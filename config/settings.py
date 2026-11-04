@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "apps.comun",
     "apps.usuarios",
     "apps.menu",
+    "apps.pedidos",
     "apps.panel",
 ]
 

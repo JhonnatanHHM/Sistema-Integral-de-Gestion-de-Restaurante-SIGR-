@@ -1,0 +1,53 @@
+.plato--pedido {
+  .plato__cabecera { flex-wrap: wrap; }
+  .plato__cantidad input { width: 4.5rem; padding: .35rem .5rem; text-align: center; }
+}
+.campo--ancho { flex: 1; min-width: 260px; }
+
+.estado {
+  display: inline-block;
+  padding: .15rem .65rem;
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-radius: 99px;
+  border: 1px solid $borde;
+  &--pendiente { color: #e0b24a; border-color: rgba(#e0b24a, .55); }
+  &--en_preparacion { color: #e58a4d; border-color: rgba(#e58a4d, .55); }
+  &--listo { color: #7fc58d; border-color: rgba(#7fc58d, .55); }
+  &--servido { color: #6fb1d6; border-color: rgba(#6fb1d6, .55); }
+  &--cerrado { color: $texto-suave; }
+  &--cancelado { color: lighten($rojo, 14%); border-color: rgba($rojo, .6); }
+}
+
+.pedido-resumen { color: $texto-suave; p { margin: .2rem 0; } strong { color: $texto; } &__notas { font-style: italic; } }
+
+.pasos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin: 1.2rem 0;
+  padding: 0;
+  list-style: none;
+  &__paso {
+    flex: 1;
+    min-width: 110px;
+    padding: .6rem .5rem;
+    text-align: center;
+    font-size: .8rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: $texto-suave;
+    border: 1px solid $borde;
+    border-bottom: 3px solid $borde;
+    border-radius: $radio;
+    &--hecho { color: $texto; border-bottom-color: $dorado; }
+    &--actual { color: $fondo; background: $dorado; border-color: $dorado; font-weight: 700; animation: pulso 2s ease-in-out infinite; }
+    &--cancelado { background: $rojo; border-color: $rojo; color: #fff; animation: none; }
+  }
+}
+@keyframes pulso { 50% { box-shadow: 0 0 0 4px rgba($dorado, .22); } }
+
+.tabla tfoot th { background: $fondo-alto; color: $dorado; font-size: 1rem; letter-spacing: 0; text-transform: none; }
+.acciones--pedido { margin-top: 1.4rem; form { margin: 0; } }
+.nota-tiempo-real { margin-top: .8rem; font-size: .78rem; color: $texto-suave; }

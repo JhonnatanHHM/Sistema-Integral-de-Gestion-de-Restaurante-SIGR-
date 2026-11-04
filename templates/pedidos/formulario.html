@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Nuevo pedido · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera"><h1>Nuevo pedido</h1></div>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="formulario__errores">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+    {% endif %}
+
+    <div class="filtros">
+      <div class="campo {% if form.mesa.errors %}campo--error{% endif %}">
+        <label class="campo__etiqueta" for="{{ form.mesa.id_for_label }}">{{ form.mesa.label }}</label>
+        {{ form.mesa }}
+        {% for error in form.mesa.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+      </div>
+      <div class="campo campo--ancho {% if form.notas.errors %}campo--error{% endif %}">
+        <label class="campo__etiqueta" for="{{ form.notas.id_for_label }}">{{ form.notas.label }}</label>
+        {{ form.notas }}
+        {% for error in form.notas.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+      </div>
+    </div>
+
+    {% for categoria, platos in form.grupos %}
+    <section class="carta">
+      <h2 class="titulo-seccion">{{ categoria.nombre }} <span class="titulo-seccion__linea"></span></h2>
+      <div class="carta__rejilla">
+        {% for plato, campo in platos %}
+        <article class="plato plato--pedido {% if campo.errors %}campo--error{% endif %}">
+          <div class="plato__cabecera">
+            <label for="{{ campo.id_for_label }}"><h3>{{ plato.nombre }}</h3></label>
+            <span class="plato__linea"></span>
+            <span class="plato__precio">$ {{ plato.precio|floatformat:"-2" }}</span>
+            <span class="plato__cantidad">{{ campo }}</span>
+          </div>
+          {% if plato.descripcion %}<p>{{ plato.descripcion }}</p>{% endif %}
+          {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% empty %}
+    <p class="tabla__vacia">No hay platos disponibles por ahora.</p>
+    {% endfor %}
+
+    <button class="boton" type="submit">Enviar pedido</button>
+  </form>
+</section>
+{% endblock %}
