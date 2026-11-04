@@ -55,12 +55,16 @@ El primer administrador se crea con `createsuperuser`; después, desde **Usuario
 
 | Ruta | Descripción |
 |---|---|
+| `/` | Inicio: bienvenida, platos destacados con foto y accesos según tu rol |
 | `/menu/` | Carta pública |
 | `/pedidos/nuevo/`, `/pedidos/` | Crear pedidos y seguirlos |
 | `/reservas/nueva/`, `/reservas/` | Reservar y gestionar reservas |
 | `/caja/` | Ventas del día; el administrador además cierra la caja y consulta facturas, cierres y reportes |
 | `/menu/gestion/platos/` | Gestión del menú (personal) |
 | `/cuentas/usuarios/` | Usuarios y alta de personal (administrador) |
+
+## Fotos de los platos
+El administrador sube la foto de cada plato al crearlo o editarlo (**Gestión del menú → Editar**) y puede marcarlo como **destacado** para que salga en el inicio (máximo 6). Se aceptan JPG, PNG o WebP de hasta 2 MB y 4000 px por lado. Un plato sin foto muestra un marcador elegante con su inicial. Las fotos se guardan en `media/` (no se versiona).
 
 ## Reglas de negocio que conviene conocer
 - **Pedidos:** mesa de 1 a 99, cantidades de 1 a 50; el precio se toma del menú en el momento de pedir y no cambia después. Solo se cancela un pedido pendiente.

@@ -25,13 +25,16 @@
     {% if categoria.descripcion %}<p class="carta__descripcion">{{ categoria.descripcion }}</p>{% endif %}
     <div class="carta__rejilla">
       {% for plato in platos %}
-      <article class="plato">
-        <div class="plato__cabecera">
-          <h3>{{ plato.nombre }}</h3>
-          <span class="plato__linea"></span>
-          <span class="plato__precio">$ {{ plato.precio|floatformat:"-2" }}</span>
+      <article class="plato {% if plato.imagen %}plato--con-foto{% endif %}">
+        {% if plato.imagen %}<img class="plato__miniatura" src="{{ plato.imagen.url }}" alt="{{ plato.nombre }}" loading="lazy">{% endif %}
+        <div class="plato__texto">
+          <div class="plato__cabecera">
+            <h3>{{ plato.nombre }}</h3>
+            <span class="plato__linea"></span>
+            <span class="plato__precio">$ {{ plato.precio|floatformat:"-2" }}</span>
+          </div>
+          {% if plato.descripcion %}<p>{{ plato.descripcion }}</p>{% endif %}
         </div>
-        {% if plato.descripcion %}<p>{{ plato.descripcion }}</p>{% endif %}
       </article>
       {% endfor %}
     </div>

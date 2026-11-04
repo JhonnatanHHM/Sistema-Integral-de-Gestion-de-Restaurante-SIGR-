@@ -1,10 +1,19 @@
+import uuid
 from decimal import Decimal
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Lower
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
-from apps.comun.validators import validar_nombre_comercial, validar_texto_libre
+from apps.comun.validators import validar_imagen, validar_nombre_comercial, validar_texto_libre
+
+
+def ruta_imagen_plato(instancia, nombre_original):
+    """Guarda cada foto con un nombre aleatorio: nunca se usa el nombre que envía el navegador."""
+    extension = nombre_original.rsplit(".", 1)[-1].lower()
+    return f"platos/{uuid.uuid4().hex}.{extension}"
 
 
 class Categoria(models.Model):
@@ -34,6 +43,8 @@ class Plato(models.Model):
         validators=[MinValueValidator(Decimal("0.01")), MaxValueValidator(Decimal("9999999.99"))],
     )
     disponible = models.BooleanField("disponible", default=True)
+    destacado = models.BooleanField("destacado en el inicio", default=False)
+    imagen = models.ImageField("foto", upload_to=ruta_imagen_plato, blank=True, validators=[validar_imagen])
     creado = models.DateTimeField(auto_now_add=True)
     actualizado = models.DateTimeField(auto_now=True)
 
@@ -45,3 +56,17 @@ class Plato(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def save(self, *args, **kwargs):
+        anterior = None
+        if self.pk:
+            anterior = Plato.objects.filter(pk=self.pk).values_list("imagen", flat=True).first()
+        super().save(*args, **kwargs)
+        if anterior and anterior != self.imagen.name:
+            self.imagen.storage.delete(anterior)          # la foto reemplazada o quitada no queda huérfana
+
+
+@receiver(post_delete, sender=Plato)
+def borrar_foto_del_plato(sender, instance, **kwargs):
+    if instance.imagen:
+        instance.imagen.storage.delete(instance.imagen.name)

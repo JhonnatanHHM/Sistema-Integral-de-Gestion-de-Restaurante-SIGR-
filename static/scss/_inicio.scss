@@ -1,0 +1,91 @@
+.portada {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  min-height: 62vh;
+  padding: 4rem 1.25rem;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba($dorado, .18), transparent 60%),
+    radial-gradient(ellipse at 85% 100%, rgba($rojo, .10), transparent 55%),
+    linear-gradient(180deg, #121110, $fondo);
+  &__contenido { max-width: 46rem; }
+  &__titulo { margin: .4rem 0 1rem; font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1.05; letter-spacing: .02em; }
+  &__texto { max-width: 34rem; margin: 0 auto 2rem; font-size: 1.1rem; color: $texto-suave; }
+  &__acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; }
+}
+.portada .hero__sello {
+  display: inline-block;
+  margin: 0;
+  padding: .25rem 1rem;
+  border: 1px solid $dorado;
+  color: $dorado;
+  font-size: .75rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+}
+
+.boton--solido { background: $dorado; color: $fondo; font-weight: 700; &:hover { background: lighten($dorado, 8%); color: $fondo; } }
+
+.destacados {
+  max-width: $ancho-max;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 1rem;
+  &__rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  &__pie { margin: 1.5rem 0 0; text-align: center; }
+}
+
+.foto-plato {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: $fondo;
+  &--vacia {
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 50% 40%, rgba($dorado, .22), transparent 65%),
+      linear-gradient(135deg, #2a2724, #1d1b19);
+    span { font-family: $fuente-titulo; font-size: 4.5rem; font-weight: 800; color: rgba($dorado, .8); }
+  }
+}
+
+.tarjeta-plato {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: $fondo-alto;
+  border: 1px solid $borde;
+  border-bottom: 3px solid $dorado;
+  border-radius: $radio;
+  transition: transform .25s, border-color .25s;
+  &:hover { transform: translateY(-5px); border-bottom-color: $rojo; }
+  &__cuerpo { display: flex; flex-direction: column; flex: 1; padding: 1.2rem 1.3rem 1.3rem; h3 { margin: .2rem 0 .4rem; font-size: 1.25rem; } p { margin: 0 0 1rem; color: $texto-suave; font-size: .92rem; } }
+  &__categoria { font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: $dorado; }
+  &__precio { margin-top: auto; font-family: $fuente-titulo; font-size: 1.2rem; font-weight: 700; color: $dorado; }
+}
+
+.datos {
+  max-width: $ancho-max;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  &__rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; }
+}
+.dato {
+  padding: 1.3rem 1.4rem;
+  border: 1px solid $borde;
+  border-left: 3px solid $dorado;
+  border-radius: $radio;
+  &__titulo { font-size: .75rem; letter-spacing: .18em; text-transform: uppercase; color: $dorado; }
+  p { margin: .4rem 0 0; color: $texto-suave; }
+}
+
+// Carta pública con miniatura
+.plato--con-foto {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+.plato__miniatura { width: 92px; height: 92px; object-fit: cover; border-radius: $radio; border: 1px solid $borde; }
+.plato__texto { min-width: 0; }

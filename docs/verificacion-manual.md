@@ -43,5 +43,10 @@ Requisitos: sistema en marcha (ver el [README](../README.md)) y datos de ejemplo
 | 28 | Caja | Tras cerrar la caja, intentar cerrar otro pedido | Se rechaza: la caja de hoy ya está cerrada | ☐ |
 | 29 | Factura | Abrir la factura de un pedido cerrado e imprimirla | Se ve numerada y se imprime sin menús ni botones | ☐ |
 
+| 30 | Inicio | Abrir `/` sin sesión, como cliente, como mesero y como administrador | Cada rol ve solo sus accesos: el visitante, menú/registro/ingreso; el cliente, menú, pedido y reserva; el personal, su trabajo; solo el administrador ve «Usuarios» | ☐ |
+| 31 | Fotos | Como administrador, editar un plato y subir una foto JPG o PNG válida; marcarlo como «destacado» | La foto aparece en el inicio y como miniatura en la carta | ☐ |
+| 32 | Fotos | Subir un archivo `.svg`, `.gif`, un `.txt` renombrado a `.png`, o una foto de más de 2 MB | Se rechaza con un mensaje claro y no se guarda nada | ☐ |
+| 33 | Fotos | Reemplazar la foto de un plato y quitarla con «Limpiar» | La foto anterior desaparece del sitio; sin foto se muestra la inicial del plato | ☐ |
+
 ## Evidencia
 Para el informe, anotar la fecha de la verificación, quién la hizo y capturar las pantallas de los puntos 10, 12, 17, 22, 26 y 29.

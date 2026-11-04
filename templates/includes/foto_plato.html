@@ -1,0 +1,5 @@
+{% if plato.imagen %}
+<img class="foto-plato" src="{{ plato.imagen.url }}" alt="{{ plato.nombre }}" loading="lazy">
+{% else %}
+<div class="foto-plato foto-plato--vacia" role="img" aria-label="{{ plato.nombre }}"><span>{{ plato.nombre|slice:":1"|upper }}</span></div>
+{% endif %}

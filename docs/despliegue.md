@@ -109,6 +109,7 @@ DJANGO_BEHIND_PROXY=1
 ### 5. Tablas, estáticos y administrador
 ```bash
 cd /opt/sigr/app
+sudo -u sigr mkdir -p media           # aquí se guardan las fotos de los platos (debe poder escribir el usuario sigr)
 sudo -u sigr /opt/sigr/venv/bin/python manage.py migrate
 sudo -u sigr /opt/sigr/venv/bin/python manage.py collectstatic --noinput
 sudo -u sigr /opt/sigr/venv/bin/python manage.py createsuperuser
@@ -152,8 +153,14 @@ server {
     server_name sigr.ejemplo.com;
     # ssl_certificate y ssl_certificate_key: por ejemplo con certbot (Let's Encrypt)
 
+    client_max_body_size 3m;          # las fotos de los platos pesan hasta 2 MB
+
     location /static/ {
         alias /opt/sigr/app/staticfiles/;
+    }
+
+    location /media/ {
+        alias /opt/sigr/app/media/;   # fotos de los platos
     }
 
     location / {
@@ -199,6 +206,7 @@ pg_dump -U sigr_app -h localhost -Fc sigr > sigr_$(date +%F).dump
 # Restauración (sobre una base vacía)
 pg_restore -U sigr_app -h localhost -d sigr --clean --if-exists sigr_2026-11-04.dump
 ```
+Las fotos de los platos no están en la base de datos: copia también la carpeta `media/` (`tar czf media_$(date +%F).tgz /opt/sigr/app/media`).
 Programa la copia diaria (cron o systemd timer) y guárdala fuera del servidor. Los cierres de caja y las facturas son datos contables: no se borran.
 
 ## Problemas frecuentes
@@ -209,6 +217,7 @@ Programa la copia diaria (cron o systemd timer) y guárdala fuera del servidor. 
 | Error 400 «Bad Request» | Dominio fuera de `DJANGO_ALLOWED_HOSTS` | Agregar el dominio |
 | Error 403 «CSRF verification failed» al enviar formularios | Falta `DJANGO_CSRF_TRUSTED_ORIGINS` o `DJANGO_BEHIND_PROXY` | Definirlas y reiniciar |
 | Bucle de redirecciones | HTTPS terminado en nginx sin `DJANGO_BEHIND_PROXY=1` | Activarla y enviar `X-Forwarded-Proto` |
+| Las fotos de los platos no se ven o no se pueden subir | Falta el `location /media/`, la carpeta `media/` no es escribible por `sigr`, o la foto pesa más de 2 MB | Revisar nginx y permisos de `media/` |
 | Página sin estilos | No se ejecutó `collectstatic` o falta el `location /static/` | Ejecutarlo y revisar nginx |
 | `password authentication failed` | Credenciales de `.env` distintas a las de PostgreSQL | Corregir `DB_USER`/`DB_PASSWORD` |
 | Las pruebas no pueden crear la base | El usuario no tiene `CREATEDB` | `ALTER USER sigr_app CREATEDB;` |
