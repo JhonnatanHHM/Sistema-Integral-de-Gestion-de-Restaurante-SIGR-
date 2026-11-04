@@ -47,6 +47,9 @@ La carta pública está en `/menu/`. El personal gestiona los platos en `/menu/g
 ### Pedidos
 Cualquier usuario con sesión crea un pedido en `/pedidos/nuevo/` (mesa y cantidad por plato). El cliente ve y cancela (mientras esté pendiente) solo los suyos; el mesero y el administrador ven todos y avanzan el estado: Pendiente → En preparación → Listo → Servido → Cerrado. Las pantallas de pedidos se refrescan solas.
 
+### Reservas
+El cliente reserva en `/reservas/nueva/`: fecha, hora (franjas de 30 minutos entre 11:00 y 20:00), personas (1 a 12) y mesa (1 a 99). Cada reserva ocupa la mesa 2 horas y se admite con entre 1 hora y 30 días de anticipación; el sistema impide cruces. El mesero y el administrador ven todas las reservas, las confirman, las completan o las cancelan. Las reglas están en `apps/reservas/reglas.py`.
+
 ### Estilos
 ```powershell
 .venv\Scripts\python manage.py compilar_scss          # compila una vez

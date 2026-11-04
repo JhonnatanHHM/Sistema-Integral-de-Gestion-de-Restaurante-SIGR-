@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo %}Nueva reserva · SIGR{% endblock %}
+{% block contenido %}
+<section class="auth">
+  <form class="auth__tarjeta" method="post" novalidate>
+    {% csrf_token %}
+    <h1>Reservar mesa</h1>
+    <p class="auth__dato">Atendemos de 11:00 a 22:00. Cada reserva dura 2 horas y se puede hacer con hasta 30 días de anticipación.</p>
+    {% include "includes/formulario.html" %}
+    <button class="boton boton--bloque" type="submit">Reservar</button>
+    <p class="auth__pie"><a href="{% url 'reservas:lista' %}">Volver a mis reservas</a></p>
+  </form>
+</section>
+{% endblock %}
