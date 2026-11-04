@@ -1,0 +1,47 @@
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.indicador {
+  padding: 1.2rem 1.4rem;
+  background: $fondo-alto;
+  border: 1px solid $borde;
+  border-left: 3px solid $dorado;
+  border-radius: $radio;
+  &__etiqueta { display: block; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: $texto-suave; }
+  &__valor { display: block; margin-top: .3rem; font-family: $fuente-titulo; font-size: 1.8rem; color: $dorado; }
+}
+
+.aviso {
+  margin: 1rem 0;
+  padding: .8rem 1rem;
+  border-left: 3px solid $dorado;
+  background: $fondo-alto;
+  &--ok { border-color: #5aa469; }
+}
+
+.factura {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: $fondo-alto;
+  border: 1px solid $borde;
+  border-top: 3px solid $dorado;
+  border-radius: $radio;
+  &__cabecera { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; p { margin: .2rem 0 0; color: $texto-suave; } }
+  &__numero { text-align: right; strong { font-family: $fuente-titulo; font-size: 1.5rem; color: $dorado; } }
+  &__datos { margin: 1.4rem 0; color: $texto-suave; }
+  &__pie { margin: 1.4rem 0 0; text-align: center; font-style: italic; color: $texto-suave; }
+  &__acciones { justify-content: center; margin-top: 1.4rem; }
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .encabezado, .pie, .factura__acciones, .mensajes { display: none !important; }
+  .factura { border: 0; background: #fff; color: #000; box-shadow: none; }
+  .factura p, .factura th, .factura td, .factura__numero strong, .factura .marca { color: #000 !important; }
+  .tabla th { background: #fff; border-bottom: 2px solid #000; }
+  .tabla td { border-bottom: 1px solid #ccc; }
+}

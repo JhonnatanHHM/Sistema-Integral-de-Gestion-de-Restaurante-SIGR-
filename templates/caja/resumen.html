@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Caja · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Caja del {{ hoy|date:"d/m/Y" }}</h1>
+    {% if user.es_administrador %}
+    <div class="acciones">
+      <a class="boton" href="{% url 'caja:reportes' %}">Reportes</a>
+      <a class="boton" href="{% url 'caja:facturas' %}">Facturas</a>
+      <a class="boton" href="{% url 'caja:cierres' %}">Cierres</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="indicadores">
+    <article class="indicador"><span class="indicador__etiqueta">Ventas del día</span><strong class="indicador__valor">$ {{ total|floatformat:"-2" }}</strong></article>
+    {% if user.es_administrador %}
+    <article class="indicador"><span class="indicador__etiqueta">Facturas emitidas</span><strong class="indicador__valor">{{ facturas }}</strong></article>
+    <article class="indicador"><span class="indicador__etiqueta">Pedidos sin cerrar</span><strong class="indicador__valor">{{ pedidos_activos }}</strong></article>
+    {% endif %}
+  </div>
+
+  {% if user.es_administrador %}
+    {% if cierre %}
+    <p class="aviso aviso--ok">La caja de hoy ya está cerrada: {{ cierre.resultado }} de $ {{ cierre.diferencia|floatformat:"-2" }} (efectivo contado $ {{ cierre.efectivo_contado|floatformat:"-2" }}).</p>
+    {% else %}
+    <p class="aviso">La caja de hoy sigue abierta.</p>
+    <a class="boton" href="{% url 'caja:cierre_nuevo' %}">Cerrar caja</a>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}

@@ -6,6 +6,21 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.6.0] - 2026-11-04
+
+### Añadido
+- App `caja` con los modelos `Factura` y `CierreCaja`.
+- Facturación: al cerrar un pedido se emite automáticamente su factura numerada (`F-000001`), una sola por pedido y con el total congelado. La factura se imprime desde el navegador y el cliente puede verla desde su pedido.
+- Cierre de caja (solo administrador): registra el efectivo contado, lo compara con las ventas facturadas del día y guarda la diferencia (cuadrado, sobrante o faltante). Un cierre no se puede modificar, eliminar ni repetir para el mismo día.
+- Reglas del cierre: no se cierra una fecha futura ni un día con pedidos sin cerrar; con la caja de hoy cerrada ya no se pueden cerrar más pedidos.
+- Reportes de ventas (solo administrador): ventas por día, total del período, número de facturas, ticket promedio y platos más vendidos, con rango de fechas validado (formato ISO, desde ≤ hasta ≤ hoy, máximo un año).
+- Resumen de caja: el mesero ve solo el total del día; el administrador ve además facturas, pedidos sin cerrar y los accesos de gestión.
+- Listados de facturas y de cierres de caja.
+- 44 pruebas nuevas: facturación y numeración, diferencias de caja, inmutabilidad de los cierres, totales de reportes, efectivo y fechas mal formados, inyección SQL en filtros y permisos por rol.
+
+### Cambiado
+- `MontoField` acepta una cantidad configurable de dígitos (las cajas manejan hasta 10 enteros); su valor por defecto no cambia.
+
 ## [0.5.0] - 2026-11-04
 
 ### Añadido

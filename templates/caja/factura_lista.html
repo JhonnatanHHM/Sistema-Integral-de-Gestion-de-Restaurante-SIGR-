@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titulo %}Facturas · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Facturas</h1>
+    <a class="boton" href="{% url 'caja:resumen' %}">Caja de hoy</a>
+  </div>
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Factura</th><th>Pedido</th><th>Emitida</th><th>Total</th><th>Emitida por</th><th></th></tr></thead>
+      <tbody>
+      {% for factura in facturas %}
+        <tr>
+          <td>{{ factura.numero }}</td>
+          <td>#{{ factura.pedido_id }}</td>
+          <td>{{ factura.emitida|date:"d/m/Y H:i" }}</td>
+          <td>$ {{ factura.total|floatformat:"-2" }}</td>
+          <td>{{ factura.emitida_por.nombre_completo }}</td>
+          <td><a href="{% url 'caja:factura' factura.pk %}">Ver</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="tabla__vacia">Aún no hay facturas.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if is_paginated %}
+  <nav class="paginador" aria-label="Paginación">
+    {% if page_obj.has_previous %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">← Anterior</a>{% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente →</a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}

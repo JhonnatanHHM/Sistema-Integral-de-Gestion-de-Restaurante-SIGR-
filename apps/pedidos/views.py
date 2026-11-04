@@ -3,9 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic import DetailView, FormView, ListView
 
+from apps.caja.services import caja_cerrada, emitir_factura
 from apps.comun.views import FiltrosEnPaginacionMixin
 from apps.usuarios.mixins import PersonalRequeridoMixin
 
@@ -96,9 +98,14 @@ class PedidoAvanzarView(PersonalRequeridoMixin, View):
                 messages.error(request, "El estado del pedido cambió mientras lo veías. Revísalo e inténtalo de nuevo.")
             elif pedido.siguiente_estado is None:
                 messages.error(request, "El pedido ya está en su estado final.")
+            elif pedido.siguiente_estado == Estado.CERRADO and caja_cerrada(timezone.localdate()):
+                messages.error(request, "La caja de hoy ya está cerrada: no se pueden cerrar más pedidos hoy.")
             else:
                 pedido.avanzar()
                 messages.success(request, f"Pedido #{pedido.pk}: {Estado(pedido.estado).label}.")
+                if pedido.estado == Estado.CERRADO:
+                    factura = emitir_factura(pedido, request.user)
+                    messages.success(request, f"Factura {factura.numero} emitida por $ {factura.total}.")
         return redirect("pedidos:detalle", pk=pk)
 
 
