@@ -6,6 +6,27 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.0.0] - 2026-11-04
+
+**Línea base del código fuente del Sistema Integral de Gestión de Restaurante (SIGR).** Primer hito estable del proyecto: a partir de aquí, todo cambio se gestiona como una solicitud de cambio y se publica con una versión nueva.
+
+### Incluye
+- Autenticación de usuarios con roles de cliente, mesero y administrador (`0.2.0`).
+- Menú digital con CRUD de platos y categorías (`0.3.0`).
+- Registro y seguimiento de pedidos con actualización automática (`0.4.0`).
+- Reservas por fecha y hora con bloqueo de cruces (`0.5.0`).
+- Facturación, cierre de caja y reportes de ventas (`0.6.0`).
+- Pruebas de integración, flujo de integración continua sobre PostgreSQL (check obligatorio) y guía de verificación manual (`0.7.0`).
+- Documentación técnica: README, estructura de la base de datos, arquitectura y convenciones, manual de despliegue y definición de la línea base (`0.8.0`).
+
+### Verificación de la línea base
+- Instalación desde cero a partir de un clon limpio del repositorio, con entorno de Python y base de datos nuevos: `check`, `migrate`, estilos y datos de ejemplo sin errores.
+- 212 pruebas automáticas en verde sobre PostgreSQL.
+- Servidor en marcha con inicio de sesión de administrador y las pantallas principales respondiendo correctamente.
+
+### Cambiado
+- `docs/linea-base.md` registra la fecha de creación de la línea base.
+
 ## [0.8.0] - 2026-11-04
 
 ### Añadido
