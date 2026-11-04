@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Menú · SIGR{% endblock %}
+{% block contenido %}
+<section class="menu-hero">
+  <p class="hero__sello">Nuestra carta</p>
+  <h1>Menú</h1>
+</section>
+
+<section class="pagina">
+  <form class="filtros" method="get" novalidate>
+    {% for campo in formulario %}
+    <div class="campo {% if campo.errors %}campo--error{% endif %}">
+      <label class="campo__etiqueta" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="boton" type="submit">Buscar</button>
+  </form>
+
+  {% for categoria, platos in grupos %}
+  <section class="carta">
+    <h2 class="titulo-seccion">{{ categoria.nombre }} <span class="titulo-seccion__linea"></span></h2>
+    {% if categoria.descripcion %}<p class="carta__descripcion">{{ categoria.descripcion }}</p>{% endif %}
+    <div class="carta__rejilla">
+      {% for plato in platos %}
+      <article class="plato">
+        <div class="plato__cabecera">
+          <h3>{{ plato.nombre }}</h3>
+          <span class="plato__linea"></span>
+          <span class="plato__precio">$ {{ plato.precio|floatformat:"-2" }}</span>
+        </div>
+        {% if plato.descripcion %}<p>{{ plato.descripcion }}</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% empty %}
+  <p class="tabla__vacia">No hay platos que coincidan con tu búsqueda.</p>
+  {% endfor %}
+</section>
+{% endblock %}

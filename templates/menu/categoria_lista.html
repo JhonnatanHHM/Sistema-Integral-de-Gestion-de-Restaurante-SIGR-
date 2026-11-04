@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Categorías · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Categorías</h1>
+    <div class="acciones">
+      <a class="boton" href="{% url 'menu:plato_lista' %}">Platos</a>
+      <a class="boton" href="{% url 'menu:categoria_nueva' %}">Nueva categoría</a>
+    </div>
+  </div>
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Orden</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      {% for categoria in categorias %}
+        <tr>
+          <td>{{ categoria.orden }}</td>
+          <td>{{ categoria.nombre }}</td>
+          <td>{{ categoria.descripcion|default:"—" }}</td>
+          <td><span class="etiqueta {% if categoria.activa %}etiqueta--ok{% else %}etiqueta--no{% endif %}">{% if categoria.activa %}Activa{% else %}Oculta{% endif %}</span></td>
+          <td class="tabla__acciones">
+            <a href="{% url 'menu:categoria_editar' categoria.pk %}">Editar</a>
+            <a href="{% url 'menu:categoria_eliminar' categoria.pk %}">Eliminar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="tabla__vacia">Aún no hay categorías.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
