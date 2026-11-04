@@ -6,6 +6,19 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.7.0] - 2026-11-04
+
+### Añadido
+- Pruebas de integración de extremo a extremo (`apps/integracion`): de la cuenta nueva a la reserva, el pedido, la factura, el cierre de caja y el reporte, más cancelaciones, alta de personal y platos agotados.
+- Matriz de acceso por rol: verifica qué rol puede abrir cada pantalla y falla si se agrega una ruta sin declarar su permiso.
+- Barrido de seguridad: entradas hostiles (inyección SQL, scripts, rutas, plantillas, valores gigantes) en todos los buscadores y formularios; ninguna produce error del servidor ni guarda datos en campos estrictos, y el texto libre se muestra escapado.
+- Verificaciones de integridad: sin migraciones pendientes, `check` sin problemas y SCSS compilable.
+- Flujo de GitHub Actions `pruebas`: instala dependencias, verifica configuración y migraciones, compila los estilos y ejecuta toda la suite sobre PostgreSQL en cada Pull Request a `dev` y `main`.
+- `config/settings_ci.py`: pruebas sobre PostgreSQL real con cifrado de contraseñas rápido (de más de 6 minutos a unos 20 segundos).
+- Guía de verificación manual con 29 comprobaciones en `docs/verificacion-manual.md`.
+- El check `pruebas` pasa a ser obligatorio en las ramas protegidas, junto con `origen-permitido`.
+- 22 pruebas nuevas (212 en total).
+
 ## [0.6.0] - 2026-11-04
 
 ### Añadido

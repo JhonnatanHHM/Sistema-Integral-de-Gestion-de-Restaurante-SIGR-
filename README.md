@@ -61,8 +61,10 @@ Al pasar un pedido a **Cerrado** se emite su factura (`F-000001`…). En `/caja/
 
 ### Pruebas
 ```powershell
-.venv\Scripts\python manage.py test --settings=config.settings_test
+.venv\Scripts\python manage.py test --settings=config.settings_test   # rápidas, SQLite en memoria
+.venv\Scripts\python manage.py test --settings=config.settings_ci     # sobre PostgreSQL (lo mismo que el CI)
 ```
+Incluyen pruebas unitarias por módulo y pruebas de integración de extremo a extremo (`apps/integracion`). En GitHub, el flujo `pruebas` las ejecuta en cada Pull Request y su resultado es obligatorio para fusionar. Para una revisión a mano, ver [docs/verificacion-manual.md](docs/verificacion-manual.md).
 
 ## Flujo de trabajo y versionado
 Ver [CONTRIBUTING.md](CONTRIBUTING.md) y [CHANGELOG.md](CHANGELOG.md). Flujo: `rama nueva → dev → main`, siempre por Pull Request.
