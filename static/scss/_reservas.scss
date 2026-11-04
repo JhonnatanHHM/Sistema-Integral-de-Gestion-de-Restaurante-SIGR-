@@ -1,0 +1,7 @@
+.estado {
+  &--confirmada { color: #7fc58d; border-color: rgba(#7fc58d, .55); }
+  &--completada { color: #6fb1d6; border-color: rgba(#6fb1d6, .55); }
+  &--cancelada { color: lighten($rojo, 14%); border-color: rgba($rojo, .6); }
+}
+
+input[type="date"] { color-scheme: dark; }
