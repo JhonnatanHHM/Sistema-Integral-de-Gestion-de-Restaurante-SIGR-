@@ -99,8 +99,13 @@ class PlatoDeleteView(AdministradorRequeridoMixin, DeleteView):
     extra_context = {"seccion": "gestion_menu", "volver": reverse_lazy("menu:plato_lista")}
 
     def form_valid(self, form):
+        try:
+            respuesta = super().form_valid(form)
+        except ProtectedError:
+            messages.error(self.request, "No se puede eliminar: el plato tiene pedidos asociados. Márcalo como agotado.")
+            return redirect("menu:plato_lista")
         messages.success(self.request, "Plato eliminado.")
-        return super().form_valid(form)
+        return respuesta
 
 
 class PlatoDisponibilidadView(PersonalRequeridoMixin, View):

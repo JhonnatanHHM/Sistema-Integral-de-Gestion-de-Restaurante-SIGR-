@@ -1,0 +1,38 @@
+<div class="pedido-resumen">
+  <p>Mesa <strong>{{ pedido.mesa }}</strong> · {{ pedido.creado|date:"d/m/Y H:i" }}
+    {% if pedido.cliente %}· Cliente: {{ pedido.cliente.nombre_completo }}{% else %}· Registrado por: {{ pedido.creado_por.nombre_completo }}{% endif %}
+  </p>
+  {% if pedido.notas %}<p class="pedido-resumen__notas">Notas: {{ pedido.notas }}</p>{% endif %}
+</div>
+
+<ol class="pasos">
+  {% for paso in pedido.pasos %}
+  <li class="pasos__paso {% if paso.completado %}pasos__paso--hecho{% endif %} {% if paso.actual %}pasos__paso--actual{% endif %} {% if pedido.estado == 'cancelado' %}pasos__paso--cancelado{% endif %}">{{ paso.etiqueta }}</li>
+  {% endfor %}
+</ol>
+
+<div class="tabla-envoltorio">
+  <table class="tabla">
+    <thead><tr><th>Plato</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead>
+    <tbody>
+    {% for item in pedido.items.all %}
+      <tr><td>{{ item.plato.nombre }}</td><td>{{ item.cantidad }}</td><td>$ {{ item.precio_unitario|floatformat:"-2" }}</td><td>$ {{ item.subtotal|floatformat:"-2" }}</td></tr>
+    {% endfor %}
+    </tbody>
+    <tfoot><tr><th colspan="3">Total</th><th>$ {{ pedido.total|floatformat:"-2" }}</th></tr></tfoot>
+  </table>
+</div>
+
+<div class="acciones acciones--pedido">
+  {% if pedido.siguiente_estado and user.es_personal %}
+  <form method="post" action="{% url 'pedidos:avanzar' pedido.pk %}">{% csrf_token %}
+    <input type="hidden" name="desde" value="{{ pedido.estado }}">
+    <button class="boton" type="submit">Pasar a «{{ pedido.siguiente_etiqueta }}»</button>
+  </form>
+  {% endif %}
+  {% if pedido.puede_cancelarse %}
+  <form method="post" action="{% url 'pedidos:cancelar' pedido.pk %}">{% csrf_token %}
+    <button class="boton boton--peligro" type="submit">Cancelar pedido</button>
+  </form>
+  {% endif %}
+</div>

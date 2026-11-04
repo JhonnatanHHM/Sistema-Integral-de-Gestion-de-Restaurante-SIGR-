@@ -44,6 +44,9 @@ La carta pública está en `/menu/`. El personal gestiona los platos en `/menu/g
 .venv\Scripts\python manage.py cargar_menu_demo
 ```
 
+### Pedidos
+Cualquier usuario con sesión crea un pedido en `/pedidos/nuevo/` (mesa y cantidad por plato). El cliente ve y cancela (mientras esté pendiente) solo los suyos; el mesero y el administrador ven todos y avanzan el estado: Pendiente → En preparación → Listo → Servido → Cerrado. Las pantallas de pedidos se refrescan solas.
+
 ### Estilos
 ```powershell
 .venv\Scripts\python manage.py compilar_scss          # compila una vez
