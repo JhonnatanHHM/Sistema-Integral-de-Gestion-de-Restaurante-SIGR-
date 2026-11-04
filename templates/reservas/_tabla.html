@@ -1,0 +1,37 @@
+<div class="tabla-envoltorio">
+  <table class="tabla">
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Mesa</th><th>Personas</th>{% if user.es_personal %}<th>Cliente</th>{% endif %}<th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+    {% for reserva in reservas %}
+      <tr>
+        <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+        <td>{{ reserva.hora|time:"H:i" }}–{{ reserva.fin|time:"H:i" }}</td>
+        <td>{{ reserva.mesa }}</td>
+        <td>{{ reserva.personas }}</td>
+        {% if user.es_personal %}<td>{{ reserva.cliente.nombre_completo }}</td>{% endif %}
+        <td><span class="estado estado--{{ reserva.estado }}">{{ reserva.get_estado_display }}</span></td>
+        <td class="tabla__acciones">
+          {% if user.es_personal and reserva.puede_confirmarse %}
+          <form method="post" action="{% url 'reservas:confirmar' reserva.pk %}">{% csrf_token %}<input type="hidden" name="desde" value="{{ reserva.estado }}"><button class="enlace-boton" type="submit">Confirmar</button></form>
+          {% endif %}
+          {% if user.es_personal and reserva.puede_completarse %}
+          <form method="post" action="{% url 'reservas:completar' reserva.pk %}">{% csrf_token %}<input type="hidden" name="desde" value="{{ reserva.estado }}"><button class="enlace-boton" type="submit">Marcar completada</button></form>
+          {% endif %}
+          {% if reserva.puede_cancelarse %}
+          <form method="post" action="{% url 'reservas:cancelar' reserva.pk %}">{% csrf_token %}<input type="hidden" name="desde" value="{{ reserva.estado }}"><button class="enlace-boton" type="submit">Cancelar</button></form>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="{% if user.es_personal %}7{% else %}6{% endif %}" class="tabla__vacia">No hay reservas que coincidan.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if is_paginated %}
+<nav class="paginador" aria-label="Paginación">
+  {% if page_obj.has_previous %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">← Anterior</a>{% endif %}
+  <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Siguiente →</a>{% endif %}
+</nav>
+{% endif %}

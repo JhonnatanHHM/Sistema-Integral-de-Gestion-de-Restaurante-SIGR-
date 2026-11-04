@@ -5,6 +5,7 @@
     <a class="menu__enlace {% if seccion == 'menu' %}menu__enlace--activo{% endif %}" href="{% url 'menu:publico' %}">Menú</a>
     {% if user.is_authenticated %}
       <a class="menu__enlace {% if seccion == 'pedidos' or seccion == 'pedido_nuevo' %}menu__enlace--activo{% endif %}" href="{% url 'pedidos:lista' %}">{% if user.es_cliente %}Mis pedidos{% else %}Pedidos{% endif %}</a>
+      <a class="menu__enlace {% if seccion == 'reservas' %}menu__enlace--activo{% endif %}" href="{% url 'reservas:lista' %}">{% if user.es_cliente %}Mis reservas{% else %}Reservas{% endif %}</a>
       {% if user.es_mesero or user.es_administrador %}
       <a class="menu__enlace {% if seccion == 'gestion_menu' %}menu__enlace--activo{% endif %}" href="{% url 'menu:plato_lista' %}">Gestión del menú</a>
       {% endif %}

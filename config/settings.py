@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "apps.usuarios",
     "apps.menu",
     "apps.pedidos",
+    "apps.reservas",
     "apps.panel",
 ]
 
