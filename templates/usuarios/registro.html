@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta · SIGR{% endblock %}
+{% block contenido %}
+<section class="auth">
+  <form class="auth__tarjeta" method="post" novalidate>
+    {% csrf_token %}
+    <h1>Crear cuenta</h1>
+    {% include "includes/formulario.html" %}
+    <button class="boton boton--bloque" type="submit">Crear cuenta</button>
+    <p class="auth__pie">¿Ya tienes cuenta? <a href="{% url 'usuarios:login' %}">Ingresa</a></p>
+  </form>
+</section>
+{% endblock %}

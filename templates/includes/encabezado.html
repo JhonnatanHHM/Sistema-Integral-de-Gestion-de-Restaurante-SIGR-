@@ -2,5 +2,15 @@
   <a class="marca" href="{% url 'inicio' %}"><span class="marca__icono">✕</span> SIGR</a>
   <nav class="menu" aria-label="Principal">
     <a class="menu__enlace {% if seccion == 'inicio' %}menu__enlace--activo{% endif %}" href="{% url 'inicio' %}">Inicio</a>
+    {% if user.is_authenticated %}
+      {% if user.es_administrador %}
+      <a class="menu__enlace {% if seccion == 'usuarios' %}menu__enlace--activo{% endif %}" href="{% url 'usuarios:lista' %}">Usuarios</a>
+      {% endif %}
+      <a class="menu__enlace {% if seccion == 'perfil' %}menu__enlace--activo{% endif %}" href="{% url 'usuarios:perfil' %}">{{ user.first_name }}</a>
+      <form class="menu__salir" method="post" action="{% url 'usuarios:logout' %}">{% csrf_token %}<button class="menu__enlace" type="submit">Salir</button></form>
+    {% else %}
+      <a class="menu__enlace" href="{% url 'usuarios:login' %}">Ingresar</a>
+      <a class="menu__enlace" href="{% url 'usuarios:registro' %}">Registrarse</a>
+    {% endif %}
   </nav>
 </header>
