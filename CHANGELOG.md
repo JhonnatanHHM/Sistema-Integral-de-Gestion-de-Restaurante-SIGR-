@@ -6,6 +6,18 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.8.0] - 2026-11-04
+
+### Añadido
+- Documentación técnica de la línea base en `docs/`: definición y criterios (`linea-base.md`), arquitectura, estructura de carpetas y convenciones (`arquitectura.md`), diagrama entidad–relación y diccionario de datos (`base-de-datos.md`) y manual de despliegue para Windows y Linux (`despliegue.md`).
+- `requirements-prod.txt` con gunicorn para producción.
+- Variables de entorno de producción: `DJANGO_CSRF_TRUSTED_ORIGINS`, `DJANGO_BEHIND_PROXY` y `DJANGO_HSTS_SECONDS`.
+
+### Cambiado
+- README reescrito como documento final: módulos, roles, puesta en marcha, reglas de negocio, pruebas y enlaces a toda la documentación.
+- Con `DJANGO_DEBUG=0` el sistema se niega a arrancar con la clave secreta por defecto, y activa HSTS; `check --deploy` queda solo con dos avisos opcionales.
+- La licencia MIT pasa a nombrar como titular a Jhonnatan Hernando Henao Montoya.
+
 ## [0.7.0] - 2026-11-04
 
 ### Añadido
