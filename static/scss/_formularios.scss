@@ -1,0 +1,71 @@
+.auth {
+  display: grid;
+  place-items: center;
+  padding: 3rem 1.25rem;
+  &__tarjeta {
+    width: 100%;
+    max-width: 440px;
+    padding: 2rem;
+    background: $fondo-alto;
+    border: 1px solid $borde;
+    border-top: 3px solid $dorado;
+    border-radius: $radio;
+    h1 { font-size: 1.9rem; }
+  }
+  &__dato { color: $texto-suave; margin-top: 0; }
+  &__pie { margin: 1.2rem 0 0; text-align: center; font-size: .9rem; color: $texto-suave; }
+}
+
+.campo {
+  margin-bottom: 1rem;
+  &__etiqueta { display: block; margin-bottom: .3rem; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: $texto-suave; }
+  &__ayuda { margin-top: .3rem; font-size: .78rem; color: $texto-suave; ul { margin: .2rem 0 0; padding-left: 1.1rem; } }
+  &__error { margin: .3rem 0 0; font-size: .82rem; color: lighten($rojo, 14%); }
+  &--error input, &--error select { border-color: $rojo; }
+}
+
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"],
+input[type="number"], input[type="date"], input[type="time"], input[type="search"], select, textarea {
+  width: 100%;
+  padding: .65rem .8rem;
+  background: $fondo;
+  color: $texto;
+  border: 1px solid $borde;
+  border-radius: $radio;
+  font: inherit;
+  transition: border-color .2s, box-shadow .2s;
+  &:focus { outline: none; border-color: $dorado; box-shadow: 0 0 0 3px rgba($dorado, .18); }
+}
+
+.formulario__errores { margin-bottom: 1rem; padding: .7rem 1rem; border-left: 3px solid $rojo; background: rgba($rojo, .12); p { margin: 0; } }
+
+.boton--bloque { display: block; width: 100%; margin-top: 1.4rem; text-align: center; }
+.menu__salir { margin: 0; .menu__enlace { background: none; border: 0; border-bottom: 2px solid transparent; font-family: inherit; cursor: pointer; } }
+
+.pagina {
+  max-width: $ancho-max;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+  &__cabecera { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; h1 { margin: 0; } }
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  .campo { margin: 0; min-width: 200px; }
+}
+
+.tabla-envoltorio { overflow-x: auto; border: 1px solid $borde; border-radius: $radio; }
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  th, td { padding: .8rem 1rem; text-align: left; border-bottom: 1px solid $borde; }
+  th { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: $dorado; background: $fondo-alto; }
+  tbody tr:hover { background: rgba(255, 255, 255, .03); }
+  &__vacia { text-align: center; color: $texto-suave; }
+}
+
+.paginador { display: flex; justify-content: center; gap: 1.2rem; margin-top: 1.5rem; color: $texto-suave; }

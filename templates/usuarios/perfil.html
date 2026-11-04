@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titulo %}Mi perfil · SIGR{% endblock %}
+{% block contenido %}
+<section class="auth">
+  <form class="auth__tarjeta" method="post" novalidate>
+    {% csrf_token %}
+    <h1>Mi perfil</h1>
+    <p class="auth__dato">{{ user.email }} · <strong>{{ user.get_rol_display }}</strong></p>
+    {% include "includes/formulario.html" %}
+    <button class="boton boton--bloque" type="submit">Guardar cambios</button>
+  </form>
+</section>
+{% endblock %}

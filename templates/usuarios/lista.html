@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Usuarios · SIGR{% endblock %}
+{% block contenido %}
+<section class="pagina">
+  <div class="pagina__cabecera">
+    <h1>Usuarios</h1>
+    <a class="boton" href="{% url 'usuarios:personal_nuevo' %}">Nuevo personal</a>
+  </div>
+
+  <form class="filtros" method="get" novalidate>
+    {% for campo in formulario %}
+    <div class="campo {% if campo.errors %}campo--error{% endif %}">
+      <label class="campo__etiqueta" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% for error in campo.errors %}<p class="campo__error">{{ error }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+    <button class="boton" type="submit">Filtrar</button>
+  </form>
+
+  <div class="tabla-envoltorio">
+    <table class="tabla">
+      <thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Estado</th></tr></thead>
+      <tbody>
+      {% for u in usuarios %}
+        <tr>
+          <td>{{ u.nombre_completo }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.telefono|default:"—" }}</td>
+          <td>{{ u.get_rol_display }}</td>
+          <td>{% if u.is_active %}Activo{% else %}Inactivo{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="tabla__vacia">No hay usuarios que coincidan.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <nav class="paginador" aria-label="Paginación">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.rol %}&rol={{ request.GET.rol|urlencode }}{% endif %}">← Anterior</a>{% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q|urlencode }}{% endif %}{% if request.GET.rol %}&rol={{ request.GET.rol|urlencode }}{% endif %}">Siguiente →</a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}
