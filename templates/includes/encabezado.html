@@ -1,0 +1,6 @@
+<header class="encabezado">
+  <a class="marca" href="{% url 'inicio' %}"><span class="marca__icono">✕</span> SIGR</a>
+  <nav class="menu" aria-label="Principal">
+    <a class="menu__enlace {% if seccion == 'inicio' %}menu__enlace--activo{% endif %}" href="{% url 'inicio' %}">Inicio</a>
+  </nav>
+</header>
