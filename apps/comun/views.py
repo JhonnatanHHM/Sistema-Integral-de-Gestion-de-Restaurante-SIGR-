@@ -5,5 +5,6 @@ class FiltrosEnPaginacionMixin:
         contexto = super().get_context_data(**kwargs)
         parametros = self.request.GET.copy()
         parametros.pop("page", None)
+        parametros.pop("parcial", None)
         contexto["querystring"] = parametros.urlencode()
         return contexto

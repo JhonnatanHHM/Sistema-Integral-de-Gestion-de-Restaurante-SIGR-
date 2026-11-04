@@ -2,6 +2,11 @@
 from django.core.validators import RegexValidator
 
 
+# Rango de mesas del restaurante (lo comparten pedidos y reservas)
+MESA_MIN = 1
+MESA_MAX = 99
+
+
 def limpiar_espacios(valor):
     """Quita espacios al inicio y al final y colapsa los espacios (y saltos de línea) repetidos."""
     return " ".join((valor or "").split())
