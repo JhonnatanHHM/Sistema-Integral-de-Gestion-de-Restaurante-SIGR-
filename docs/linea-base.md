@@ -10,6 +10,8 @@ Documento de referencia de la línea base del **Sistema Integral de Gestión de 
 | Rama estable | `main` |
 | Herramienta de versionado | Git y GitHub |
 | Licencia | MIT |
+| Fecha de creación | 04/11/2026 |
+| Commit de la línea base | El que marca el tag `v1.0.0` (`git rev-parse --short v1.0.0`) |
 | Validado por | Jhonnatan Hernando Henao Montoya (grupo de desarrollo) |
 | Responsable de aprobación | Jhonnatan Hernando Henao Montoya |
 
@@ -49,6 +51,16 @@ El detalle de cada versión está en el [CHANGELOG](../CHANGELOG.md); cada una t
 | Estructura de carpetas y convenciones de código definidas | [Arquitectura y convenciones](arquitectura.md) y [CONTRIBUTING](../CONTRIBUTING.md) |
 | Documentación técnica mínima adjunta | [README](../README.md), [estructura de la base de datos](base-de-datos.md) y [manual de despliegue](despliegue.md) |
 | Historial y licencia | [CHANGELOG](../CHANGELOG.md) y [LICENSE](../LICENSE) (MIT) |
+
+## Verificación realizada
+
+El 04/11/2026 se verificó la línea base a partir de un clon limpio del repositorio, con un entorno de Python y una base de datos PostgreSQL nuevos:
+
+1. `pip install -r requirements.txt` instaló las dependencias sin errores.
+2. `manage.py check` y `makemigrations --check` no reportaron problemas ni migraciones pendientes.
+3. `manage.py migrate` creó todas las tablas, y `cargar_menu_demo` y `createsuperuser` funcionaron.
+4. `manage.py test --settings=config.settings_ci`: 212 pruebas, todas en verde sobre PostgreSQL.
+5. El servidor arrancó, el administrador inició sesión y las pantallas principales (carta, pedidos, reservas, caja, reportes, facturas, cierres, usuarios y gestión del menú) respondieron correctamente.
 
 ## Control de cambios sobre la línea base
 
