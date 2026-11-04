@@ -31,12 +31,14 @@ class CategoriaForm(forms.ModelForm):
 class PlatoForm(forms.ModelForm):
     class Meta:
         model = Plato
-        fields = ("categoria", "nombre", "descripcion", "precio", "disponible")
+        fields = ("categoria", "nombre", "descripcion", "precio", "imagen", "disponible", "destacado")
         field_classes = {"precio": MontoField}
         widgets = {
             "nombre": forms.TextInput(attrs={"maxlength": 100}),
             "descripcion": forms.Textarea(attrs={"rows": 3, "maxlength": 500}),
+            "imagen": forms.ClearableFileInput(attrs={"accept": "image/jpeg,image/png,image/webp"}),
         }
+        help_texts = {"imagen": "JPG, PNG o WebP de hasta 2 MB y 4000 px por lado."}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
