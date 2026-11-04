@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -95,10 +96,16 @@ SESSION_COOKIE_HTTPONLY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 200
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in env("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
+if env("DJANGO_BEHIND_PROXY", "0") == "1":      # detrás de nginx u otro proxy que termina HTTPS
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 if not DEBUG:
+    if SECRET_KEY.startswith("clave-solo-para-desarrollo"):
+        raise ImproperlyConfigured("Define DJANGO_SECRET_KEY con una clave larga y aleatoria antes de ejecutar con DJANGO_DEBUG=0.")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = env("DJANGO_SSL_REDIRECT", "1") == "1"
+    SECURE_HSTS_SECONDS = int(env("DJANGO_HSTS_SECONDS", "31536000"))
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]

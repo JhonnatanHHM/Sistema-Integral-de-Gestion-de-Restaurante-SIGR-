@@ -13,6 +13,8 @@ rama nueva  ──PR──►  dev  ──PR de integración──►  main
 - Nunca se hace push directo a `dev` ni a `main` (protegidas con rulesets en GitHub).
 - Estrategia de merge: **squash** en `feature → dev`, **merge commit** en `dev → main`.
 
+Cada Pull Request debe pasar los checks obligatorios `origen-permitido` y `pruebas`. Convenciones de código, seguridad y pruebas: [docs/arquitectura.md](docs/arquitectura.md).
+
 ## Commits (Conventional Commits)
 
 `tipo(alcance): descripción en imperativo`
