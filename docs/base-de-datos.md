@@ -41,6 +41,8 @@ erDiagram
         varchar descripcion
         numeric precio
         boolean disponible
+        boolean destacado
+        varchar imagen
     }
     pedidos_pedido {
         bigint id PK
@@ -125,7 +127,11 @@ Todas las columnas de texto se validan y normalizan en los formularios antes de 
 | `descripcion` | varchar(500) | No | Texto sin `<` ni `>` |
 | `precio` | numeric(9,2) | Sí | Mayor que 0 y hasta 9.999.999,99 |
 | `disponible` | boolean | Sí | Un plato agotado no aparece en la carta ni se puede pedir |
+| `destacado` | boolean | Sí | Si es verdadero, aparece en «Platos destacados» del inicio (máximo 6) |
+| `imagen` | varchar(100) | No | Ruta de la foto dentro de `media/platos/` (nombre aleatorio). JPG, PNG o WebP reales de hasta 2 MB y 4000 px por lado |
 | `creado`, `actualizado` | timestamptz | Sí | Auditoría |
+
+La base guarda solo la **ruta** de la foto; el archivo vive en la carpeta `media/`. Al reemplazar la foto o eliminar el plato, el archivo anterior se borra.
 
 ### `pedidos_pedido` — Pedidos (app `pedidos`)
 
@@ -213,6 +219,7 @@ Para dejar de usar un usuario, un plato o una categoría se **desactivan** (`is_
 |---|---|---|
 | `usuarios` | `0001_initial` | Modelo de usuario propio |
 | `menu` | `0001_initial` | Categorías y platos |
+| `menu` | `0002_plato_foto_y_destacado` | Foto y marca de destacado del plato |
 | `pedidos` | `0001_initial` | Pedidos e ítems |
 | `reservas` | `0001_initial` | Reservas |
 | `caja` | `0001_initial` | Facturas y cierres de caja |

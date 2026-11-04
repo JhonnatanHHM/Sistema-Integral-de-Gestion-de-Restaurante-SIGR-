@@ -2,7 +2,7 @@
 {% block titulo %}{{ titulo }} · SIGR{% endblock %}
 {% block contenido %}
 <section class="auth">
-  <form class="auth__tarjeta" method="post" novalidate>
+  <form class="auth__tarjeta" method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     <h1>{{ titulo }}</h1>
     {% include "includes/formulario.html" %}
