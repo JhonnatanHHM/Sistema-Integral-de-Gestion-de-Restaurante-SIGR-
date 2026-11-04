@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo %}Cerrar caja · SIGR{% endblock %}
+{% block contenido %}
+<section class="auth">
+  <form class="auth__tarjeta" method="post" novalidate>
+    {% csrf_token %}
+    <h1>Cerrar caja</h1>
+    <p class="auth__dato">Cuenta el efectivo y regístralo. El sistema lo compara con las ventas facturadas del día. Un cierre no se puede modificar ni reabrir.</p>
+    {% include "includes/formulario.html" %}
+    <button class="boton boton--bloque" type="submit">Cerrar caja</button>
+    <p class="auth__pie"><a href="{% url 'caja:resumen' %}">Cancelar</a></p>
+  </form>
+</section>
+{% endblock %}
