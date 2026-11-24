@@ -11,6 +11,8 @@ RUN pip install -r requirements-prod.txt
 
 FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/opt/venv/bin:$PATH"
+# El disco de un contenedor no es persistente: las fotos subidas se guardan en la base de datos.
+ENV SIGR_MEDIA_EN_BD=1
 
 # Usuario sin privilegios: si alguien vulnera la aplicación no es administrador del contenedor.
 RUN useradd --system --create-home --home-dir /app --uid 10001 sigr

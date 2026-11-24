@@ -24,6 +24,7 @@ Se leen del archivo `.env` (en la carpeta del proyecto) o del entorno del sistem
 | `DJANGO_DEBUG` | No | `1` en desarrollo (por defecto); **`0` en producción** |
 | `DJANGO_ALLOWED_HOSTS` | Sí en producción | Dominios permitidos, separados por comas |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Sí en producción | Orígenes con https que envían formularios, p. ej. `https://sigr.ejemplo.com` |
+| `SIGR_MEDIA_EN_BD` | No | `1` guarda las fotos subidas en la base de datos en lugar del disco. La imagen Docker ya lo activa; en Linux con nginx y la carpeta `media/` (escenario B) se deja sin definir |
 | `SIGR_ADMIN_EMAIL`, `SIGR_ADMIN_PASSWORD` | No | Si están definidas, el contenedor crea el administrador inicial al arrancar (`crear_admin_inicial`, idempotente: nunca pisa una cuenta existente). Pensado para despliegues sin terminal, como el plan gratuito de Render. La contraseña debe cumplir los validadores de Django. `SIGR_ADMIN_NOMBRE` y `SIGR_ADMIN_APELLIDO` son opcionales |
 | `RENDER_EXTERNAL_HOSTNAME` | No | Lo define Render solo; se agrega a `DJANGO_ALLOWED_HOSTS` y a los orígenes de confianza de CSRF (https) |
 | `DJANGO_BEHIND_PROXY` | Con nginx | `1` si el proxy termina el HTTPS y envía `X-Forwarded-Proto` |
@@ -196,7 +197,7 @@ docker compose down -v
 - Al arrancar, el contenedor aplica las migraciones (`docker/entrypoint.sh`); con `SIGR_CARGAR_DEMO=1` carga además el menú de demostración.
 - Variables útiles: `PORT` (puerto de escucha), `WEB_CONCURRENCY` (procesos de gunicorn) y las de la sección «Variables de entorno».
 - El compose es solo para pruebas en http: desactiva la redirección a https y HSTS. En un despliegue real se dejan activas.
-- Los estáticos se generan al construir la imagen y se sirven con WhiteNoise; las fotos subidas (`media/`) no se guardan en la imagen: en un contenedor sin volumen se pierden al reiniciar.
+- Los estáticos se generan al construir la imagen y se sirven con WhiteNoise; las fotos subidas no se guardan en el disco del contenedor (se perderían al reiniciar): la imagen trae `SIGR_MEDIA_EN_BD=1`, que las guarda en la base de datos (tabla `comun_archivomedia`) y las sirve en `/media/`. Sin disco persistente ni buckets.
 - La imagen se construye y se prueba automáticamente en cada pull request (flujo `imagen`).
 
 ---
@@ -248,7 +249,7 @@ pg_dump -U sigr_app -h localhost -Fc sigr > sigr_$(date +%F).dump
 # Restauración (sobre una base vacía)
 pg_restore -U sigr_app -h localhost -d sigr --clean --if-exists sigr_2026-11-04.dump
 ```
-Las fotos de los platos no están en la base de datos: copia también la carpeta `media/` (`tar czf media_$(date +%F).tgz /opt/sigr/app/media`).
+Con `SIGR_MEDIA_EN_BD=1` las fotos ya van dentro de la copia de la base de datos. En el escenario B (disco) no: copia también la carpeta `media/` (`tar czf media_$(date +%F).tgz /opt/sigr/app/media`).
 Programa la copia diaria (cron o systemd timer) y guárdala fuera del servidor. Los cierres de caja y las facturas son datos contables: no se borran.
 
 ## Problemas frecuentes
@@ -259,6 +260,7 @@ Programa la copia diaria (cron o systemd timer) y guárdala fuera del servidor. 
 | Error 400 «Bad Request» | Dominio fuera de `DJANGO_ALLOWED_HOSTS` | Agregar el dominio |
 | Error 403 «CSRF verification failed» al enviar formularios | Falta `DJANGO_CSRF_TRUSTED_ORIGINS` o `DJANGO_BEHIND_PROXY` | Definirlas y reiniciar |
 | Bucle de redirecciones | HTTPS terminado en nginx sin `DJANGO_BEHIND_PROXY=1` | Activarla y enviar `X-Forwarded-Proto` |
+| Las fotos salen rotas (404 en `/media/...`) en un contenedor o en Render | El almacenamiento es el disco, que se borra al reiniciar, o `DEBUG=0` sin nginx sirviendo `/media/` | Definir `SIGR_MEDIA_EN_BD=1` (la imagen Docker ya lo trae) y volver a subir las fotos |
 | Las fotos de los platos no se ven o no se pueden subir | Falta el `location /media/`, la carpeta `media/` no es escribible por `sigr`, o la foto pesa más de 2 MB | Revisar nginx y permisos de `media/` |
 | Página sin estilos | No se ejecutó `collectstatic` o falta el `location /static/` | Ejecutarlo y revisar nginx |
 | `password authentication failed` | Credenciales de `.env` distintas a las de PostgreSQL | Corregir `DB_USER`/`DB_PASSWORD` |
