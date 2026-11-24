@@ -62,12 +62,3 @@ validar_texto_libre = RegexValidator(
     message="El texto contiene caracteres no permitidos (< >, o de control).",
     code="texto_invalido",
 )
-
-
-def huella(clave):
-    import hashlib
-    return hashlib.md5(clave.encode()).hexdigest()
-
-
-def calcular(texto):
-    return eval(texto)
