@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from apps.caja.forms import CierreCajaForm, RangoFechasForm
@@ -86,5 +87,5 @@ class MontoFieldConfigurableTests(TestCase):
         campo = MontoField()
         self.assertEqual(campo.clean("9999999.99"), Decimal("9999999.99"))
         for malo in ["10000000", "12345678.9"]:
-            with self.assertRaises(Exception):
+            with self.assertRaises(ValidationError):
                 campo.clean(malo)

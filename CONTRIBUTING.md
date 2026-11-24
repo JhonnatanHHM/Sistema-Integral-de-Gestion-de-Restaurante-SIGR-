@@ -29,3 +29,17 @@ Cada versión se registra en `CHANGELOG.md` (formato [Keep a Changelog](https://
 ## Pull Requests
 
 Usa la plantilla del repositorio. Actualiza el CHANGELOG en la sección `[Sin publicar]`.
+
+### Comprobaciones antes de abrir el PR
+
+Las mismas que ejecuta el pipeline (`.github/workflows/`). Instala las herramientas con `pip install -r requirements-dev.txt`:
+
+| Comprobación | Comando | Qué valida |
+|---|---|---|
+| Pruebas | `python manage.py test --settings=config.settings_ci` | Comportamiento (PostgreSQL) |
+| Estilo y errores | `ruff check .` | Código sin uso, imports ordenados, errores probables |
+| Seguridad del código | `bandit -r apps config -c pyproject.toml` | Patrones inseguros |
+| Dependencias | `pip-audit -r requirements-prod.txt` | Vulnerabilidades conocidas |
+| Cobertura | `coverage run manage.py test --settings=config.settings_ci && coverage report` | Mínimo 90 % |
+
+Un fallo de cualquiera bloquea el PR; se corrige la causa, no se silencia el aviso.

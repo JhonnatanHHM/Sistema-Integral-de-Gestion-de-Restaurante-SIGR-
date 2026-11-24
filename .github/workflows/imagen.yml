@@ -1,0 +1,47 @@
+name: Imagen Docker
+
+on:
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: imagen-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  imagen:
+    name: imagen
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir imagen y levantar staging simulado (aplicación + PostgreSQL)
+        run: docker compose up -d --build
+
+      - name: Esperar a que /salud/ responda
+        run: |
+          for intento in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/salud/; then echo; exit 0; fi
+            echo "Intento $intento: aún no responde"; sleep 3
+          done
+          echo "::error::El servicio no respondió a tiempo"
+          docker compose logs web
+          exit 1
+
+      - name: Prueba de humo (inicio, carta pública y hoja de estilos)
+        run: |
+          curl -fsS -o /dev/null http://localhost:8000/
+          curl -fsS http://localhost:8000/menu/ | grep -q "Bandeja paisa"
+          css=$(curl -fsS http://localhost:8000/ | grep -o '/static/css/sigr[^"]*\.css' | head -1)
+          echo "Hoja de estilos: $css"
+          curl -fsS -o /dev/null "http://localhost:8000$css"
+
+      - name: Registros del servicio (si algo falló)
+        if: failure()
+        run: docker compose logs
+
+      - name: Apagar staging
+        if: always()
+        run: docker compose down -v

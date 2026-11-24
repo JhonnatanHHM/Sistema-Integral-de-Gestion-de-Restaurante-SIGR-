@@ -6,6 +6,25 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.2.0] - 2026-11-24
+
+**Pipeline CI/CD del SIGR:** empaquetado, calidad y seguridad automatizadas, entrega continua y soporte para desplegar en Render. Sin cambios en las funciones del restaurante.
+
+### Añadido
+- Compatibilidad con Render: el dominio de `RENDER_EXTERNAL_HOSTNAME` se acepta automáticamente como host permitido y origen de confianza de CSRF.
+- Endpoint público `/salud/` (solo lectura) que responde `{"estado": "ok"}` si la aplicación y la base de datos funcionan, o 503 si la base falla, sin exponer detalles internos. Queda exento de la redirección a https para las comprobaciones del balanceador y las pruebas de humo del pipeline.
+- 4 pruebas nuevas (247 en total).
+- Empaquetado con Docker: `Dockerfile` en dos etapas con usuario sin privilegios, estilos y estáticos generados al construir, `HEALTHCHECK` sobre `/salud/` y arranque con migraciones automáticas (`docker/entrypoint.sh`); `docker-compose.yml` con la aplicación y PostgreSQL como staging simulado; `.dockerignore`.
+- Los archivos estáticos se sirven con WhiteNoise en producción (dependencia `whitenoise`).
+- Flujo `entrega` (entrega continua): con cada push a `dev` construye la imagen, levanta el staging simulado y le aplica una prueba de carga con Locust (`carga/locustfile.py`, umbrales de p95 y de fallos); con cada tag `vX.Y.Z` publica la imagen en GHCR (`ghcr.io/<propietario>/sigr:X.Y.Z` y `latest`) y la despliega a producción en Render mediante un deploy hook, tras una aprobación manual del entorno `produccion`; y permite volver a una versión anterior ejecutándolo a mano con el número de versión (rollback).
+- `requirements-carga.txt` con Locust.
+- Flujo `calidad` con cinco jobs en paralelo: `lint` (ruff), `seguridad-codigo` (bandit), `dependencias` (pip-audit), `cobertura` (coverage con umbral mínimo del 90 %, informe en el resumen del PR y como artefacto) y `escaneo-imagen` (Grype sobre la imagen Docker, falla con vulnerabilidades altas o críticas con corrección disponible; la acción va fijada a un commit exacto porque se descartó `trivy-action` tras el ataque a su cadena de suministro de marzo de 2026).
+- `pyproject.toml` con la configuración de ruff, bandit y coverage, y `requirements-dev.txt` con las herramientas.
+- Flujo de GitHub Actions `imagen`: construye la imagen, levanta el staging simulado y ejecuta una prueba de humo en cada pull request.
+
+### Corregido
+- Avisos del análisis estático: importaciones sin uso o desordenadas, `raise ... from` al rechazar una imagen inválida y pruebas que capturaban una excepción demasiado genérica.
+
 ## [1.1.0] - 2026-11-04
 
 ### Añadido

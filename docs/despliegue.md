@@ -24,6 +24,7 @@ Se leen del archivo `.env` (en la carpeta del proyecto) o del entorno del sistem
 | `DJANGO_DEBUG` | No | `1` en desarrollo (por defecto); **`0` en producción** |
 | `DJANGO_ALLOWED_HOSTS` | Sí en producción | Dominios permitidos, separados por comas |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Sí en producción | Orígenes con https que envían formularios, p. ej. `https://sigr.ejemplo.com` |
+| `RENDER_EXTERNAL_HOSTNAME` | No | Lo define Render solo; se agrega a `DJANGO_ALLOWED_HOSTS` y a los orígenes de confianza de CSRF (https) |
 | `DJANGO_BEHIND_PROXY` | Con nginx | `1` si el proxy termina el HTTPS y envía `X-Forwarded-Proto` |
 | `DJANGO_SSL_REDIRECT` | No | Redirigir http→https; `1` por defecto con `DJANGO_DEBUG=0` |
 | `DJANGO_HSTS_SECONDS` | No | Duración de HSTS; `31536000` por defecto con `DJANGO_DEBUG=0` |
@@ -178,6 +179,44 @@ sudo nginx -t && sudo systemctl reload nginx
 
 ### 8. Comprobación
 Abrir `https://sigr.ejemplo.com/` (debe cargar con estilos), iniciar sesión como administrador y recorrer la [guía de verificación manual](verificacion-manual.md).
+
+---
+
+## C. Contenedor Docker (staging simulado)
+
+El repositorio incluye un `Dockerfile` (imagen de producción en dos etapas) y un `docker-compose.yml` con la aplicación y PostgreSQL:
+
+```
+docker compose up --build        # aplicación en http://localhost:8000
+curl http://localhost:8000/salud/
+docker compose down -v
+```
+
+- Al arrancar, el contenedor aplica las migraciones (`docker/entrypoint.sh`); con `SIGR_CARGAR_DEMO=1` carga además el menú de demostración.
+- Variables útiles: `PORT` (puerto de escucha), `WEB_CONCURRENCY` (procesos de gunicorn) y las de la sección «Variables de entorno».
+- El compose es solo para pruebas en http: desactiva la redirección a https y HSTS. En un despliegue real se dejan activas.
+- Los estáticos se generan al construir la imagen y se sirven con WhiteNoise; las fotos subidas (`media/`) no se guardan en la imagen: en un contenedor sin volumen se pierden al reiniciar.
+- La imagen se construye y se prueba automáticamente en cada pull request (flujo `imagen`).
+
+---
+
+## D. Entrega continua (GitHub Actions → GHCR → Render)
+
+El flujo `.github/workflows/entrega.yml` automatiza la entrega:
+
+| Disparador | Qué hace |
+|---|---|
+| Push a `dev` | Construye la imagen, levanta el staging simulado (`docker-compose.yml`), verifica `/salud/` y ejecuta la prueba de carga (Locust: 20 usuarios, 30 s). Falla si el percentil 95 supera 1000 ms o los fallos superan el 1 % |
+| Tag `vX.Y.Z` | Publica `ghcr.io/<propietario>/sigr:X.Y.Z` y `latest`; después pide **aprobación manual** (entorno `produccion`), despliega la versión en Render con el *deploy hook* y espera a que `/salud/` responda |
+| Ejecución manual | Vuelve a desplegar una versión ya publicada (rollback) |
+
+Configuración necesaria (una sola vez):
+- Entornos `staging` y `produccion` en *Settings → Environments*; `produccion` con revisores obligatorios.
+- Secreto `RENDER_DEPLOY_HOOK_URL` (URL del *deploy hook* del servicio en Render) y variable `RENDER_URL` (dirección pública del servicio). Sin el secreto el flujo publica la imagen y avisa, pero no despliega.
+- El paquete `sigr` de GHCR debe ser público para que Render lo descargue sin credenciales.
+
+### Rollback
+*Actions → Entrega continua → Run workflow*, con el número de la versión estable anterior (por ejemplo `1.1.0`). Pasa por la misma aprobación manual y vuelve a desplegar esa imagen, que sigue en GHCR. Si la nueva versión incluyó migraciones de base de datos no reversibles, restaura antes la copia de seguridad (ver más abajo).
 
 ---
 

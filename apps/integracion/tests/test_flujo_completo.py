@@ -88,7 +88,7 @@ class FlujoCompletoTests(EntornoMixin, TestCase):
         self.assertEqual(reporte.context["platos"][0]["unidades"], 2)
 
         # 10. Con la caja cerrada ya no se pueden cerrar más pedidos ese día.
-        otro = cliente.post(reverse("pedidos:nuevo"), {"mesa": "2", f"plato_{limonada.pk}": "1"})
+        cliente.post(reverse("pedidos:nuevo"), {"mesa": "2", f"plato_{limonada.pk}": "1"})
         segundo = Pedido.objects.exclude(pk=pedido.pk).get()
         for _ in range(3):
             segundo.avanzar()
