@@ -101,5 +101,3 @@ Incluyen pruebas unitarias por módulo y pruebas de integración de extremo a ex
 
 ## Licencia
 MIT © 2026 Jhonnatan Hernando Henao Montoya. Ver [LICENSE](LICENSE).
-
-<!-- demo -->
