@@ -1,0 +1,146 @@
+name: Entrega continua
+
+# dev  -> staging simulado: construye la imagen, la levanta con PostgreSQL y le aplica una prueba de carga.
+# tag vX.Y.Z -> publica la imagen en GHCR y la despliega a producción (Render) tras una aprobación manual.
+# ejecución manual -> vuelve a desplegar una versión ya publicada (rollback).
+on:
+  push:
+    branches: [dev]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión ya publicada que se desplegará o a la que se vuelve (por ejemplo 1.1.0)"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: entrega-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    name: staging
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir la imagen y levantar el staging simulado
+        run: docker compose up -d --build
+
+      - name: Esperar a que /salud/ responda
+        run: |
+          for intento in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/salud/; then echo; exit 0; fi
+            echo "Intento $intento: aún no responde"; sleep 3
+          done
+          echo "::error::El staging no respondió a tiempo"
+          docker compose logs web
+          exit 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-carga.txt
+
+      - name: Prueba de carga (20 usuarios durante 30 s; falla si se superan los umbrales)
+        run: |
+          pip install -r requirements-carga.txt
+          locust -f carga/locustfile.py --headless -u 20 -r 5 -t 30s --host http://localhost:8000 --csv carga/resultado --only-summary \
+            | tee carga/resumen.txt
+          exit "${PIPESTATUS[0]}"
+
+      - name: Resumen de la prueba de carga
+        if: always()
+        run: |
+          echo '### Prueba de carga (staging simulado)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat carga/resumen.txt >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: resultados-de-carga
+          path: carga/resultado_*.csv
+
+      - name: Registros del servicio (si algo falló)
+        if: failure()
+        run: docker compose logs
+
+      - name: Apagar staging
+        if: always()
+        run: docker compose down -v
+
+  publicar:
+    name: publicar-imagen
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir y publicar la imagen en GHCR (versión y latest)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker build \
+            --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
+            --label "org.opencontainers.image.version=${version}" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            -t "${imagen}:${version}" -t "${imagen}:latest" .
+          docker push "${imagen}:${version}"
+          docker push "${imagen}:latest"
+          echo "Imagen publicada: ${imagen}:${version}" >> "$GITHUB_STEP_SUMMARY"
+
+  desplegar:
+    name: desplegar-produccion
+    needs: publicar
+    # Se ejecuta tras publicar (tag) o directamente al volver a una versión (ejecución manual).
+    if: ${{ !cancelled() && (needs.publicar.result == 'success' || needs.publicar.result == 'skipped') && (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: produccion          # exige la aprobación manual configurada en el entorno
+      url: ${{ vars.RENDER_URL }}
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      RENDER_URL: ${{ vars.RENDER_URL }}
+      VERSION_MANUAL: ${{ inputs.version }}
+    steps:
+      - name: Desplegar la versión en Render
+        run: |
+          version="${VERSION_MANUAL:-${GITHUB_REF_NAME#v}}"
+          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr:${version}"
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::warning::Falta el secreto RENDER_DEPLOY_HOOK_URL: no se desplegó ${imagen}."
+            exit 0
+          fi
+          codificada=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$imagen")
+          echo "Desplegando ${imagen}"
+          curl -fsS -X POST "${RENDER_DEPLOY_HOOK_URL}&imgURL=${codificada}"
+          echo "Versión solicitada: ${version}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Esperar a que producción responda (el plan gratuito tarda en despertar)
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ] || [ -z "$RENDER_URL" ]; then
+            echo "Sin despliegue o sin RENDER_URL: se omite la comprobación."; exit 0
+          fi
+          for intento in $(seq 1 40); do
+            if curl -fsS --max-time 20 "${RENDER_URL%/}/salud/"; then echo; echo "Producción responde."; exit 0; fi
+            echo "Intento $intento: aún no responde"; sleep 15
+          done
+          echo "::error::Producción no respondió tras el despliegue. Considera volver a la versión anterior (ejecución manual de este flujo)."
+          exit 1
