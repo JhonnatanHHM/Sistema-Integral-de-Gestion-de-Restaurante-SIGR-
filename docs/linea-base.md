@@ -65,6 +65,6 @@ El 04/11/2026 se verificó la línea base a partir de un clon limpio del reposit
 ## Control de cambios sobre la línea base
 
 - Cualquier cambio entra por Pull Request de una rama de trabajo hacia `dev`, y de `dev` hacia `main`. No hay commits directos.
-- Cada Pull Request debe pasar los checks obligatorios `origen-permitido` y `pruebas`.
+- Cada Pull Request debe pasar los checks obligatorios `origen-permitido`, `pruebas`, `lint`, `seguridad-codigo`, `dependencias`, `cobertura`, `escaneo-imagen` e `imagen`.
 - Los cambios se registran en el CHANGELOG y se publican con versionado semántico: correcciones (`1.0.x`), funcionalidades compatibles (`1.x.0`) y cambios incompatibles (`2.0.0`).
 - Las nuevas solicitudes de cambio se gestionan con GitHub Issues (plantillas de error y de mejora).
