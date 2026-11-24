@@ -41,5 +41,5 @@ def servir_media(request, nombre):
     except ArchivoMedia.DoesNotExist:
         raise Http404("Archivo no encontrado.") from None
     respuesta = HttpResponse(bytes(archivo.contenido), content_type=archivo.tipo)
-    respuesta["Cache-Control"] = "public, max-age=604800"
+    respuesta["Cache-Control"] = "no-store"
     return respuesta
