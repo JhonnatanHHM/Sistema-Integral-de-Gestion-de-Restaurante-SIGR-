@@ -6,6 +6,14 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.4.3] - 2026-11-24
+
+### Corregido
+- En algunos celulares la página se podía arrastrar hacia los lados y quedaba corrida: el menú superior (hasta 9 enlaces para el administrador) no cabía en el ancho de la pantalla y ensanchaba toda la página. Ahora el encabezado y el menú se ajustan a varias líneas y centrados en pantallas angostas, y el documento no puede desplazarse en horizontal. Se comprobó con Chrome emulando celulares de 320 y 360 px: antes la página medía 408 px (visitante) y 830 px (administrador); ahora mide exactamente el ancho de la pantalla en las nueve páginas revisadas.
+
+### Cambiado
+- Nuevo logotipo de restaurante (cloche, la campana de servicio) en SVG en lugar de la «✕» junto al nombre SIGR; también en la factura y como icono de la pestaña del navegador.
+
 ## [1.4.2] - 2026-11-24
 
 ### Cambiado

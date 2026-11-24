@@ -41,7 +41,7 @@
   body { background: #fff; color: #000; }
   .encabezado, .pie, .factura__acciones, .mensajes { display: none !important; }
   .factura { border: 0; background: #fff; color: #000; box-shadow: none; }
-  .factura p, .factura th, .factura td, .factura__numero strong, .factura .marca { color: #000 !important; }
+  .factura p, .factura th, .factura td, .factura__numero strong, .factura .marca, .factura .marca__logo { color: #000 !important; }
   .tabla th { background: #fff; border-bottom: 2px solid #000; }
   .tabla td { border-bottom: 1px solid #ccc; }
 }

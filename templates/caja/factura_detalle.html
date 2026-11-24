@@ -4,7 +4,7 @@
 <section class="pagina">
   <article class="factura">
     <header class="factura__cabecera">
-      <div><span class="marca"><span class="marca__icono">✕</span> SIGR</span><p>Sistema Integral de Gestión de Restaurante</p></div>
+      <div><span class="marca">{% include "includes/logo.html" %}<span class="marca__nombre">SIGR</span></span><p>Sistema Integral de Gestión de Restaurante</p></div>
       <div class="factura__numero"><strong>{{ factura.numero }}</strong><p>{{ factura.emitida|date:"d/m/Y H:i" }}</p></div>
     </header>
     <p class="factura__datos">
