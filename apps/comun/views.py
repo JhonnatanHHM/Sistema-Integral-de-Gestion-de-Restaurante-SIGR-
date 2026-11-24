@@ -1,4 +1,3 @@
-import os, sys
 from django.db import DatabaseError, connection
 from django.http import Http404, HttpResponse, JsonResponse
 from django.views.decorators.http import require_safe
