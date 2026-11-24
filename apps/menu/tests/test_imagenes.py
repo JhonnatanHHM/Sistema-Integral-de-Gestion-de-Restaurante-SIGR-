@@ -11,7 +11,7 @@ from PIL import Image
 
 from apps.comun.validators import validar_imagen
 from apps.menu.forms import PlatoForm
-from apps.menu.models import Categoria, Plato
+from apps.menu.models import Plato
 
 from .test_vistas import DatosMenuMixin
 

@@ -48,7 +48,7 @@ def validar_imagen(archivo):
             formato, (ancho, alto) = imagen.format, imagen.size
             imagen.verify()
     except Exception:
-        raise ValidationError("El archivo no es una imagen válida.", code="imagen_invalida")
+        raise ValidationError("El archivo no es una imagen válida.", code="imagen_invalida") from None
     finally:
         archivo.seek(0)
     if extension not in EXTENSIONES_POR_FORMATO.get(formato, set()):

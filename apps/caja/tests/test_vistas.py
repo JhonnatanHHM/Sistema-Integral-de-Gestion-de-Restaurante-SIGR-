@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.caja.models import CierreCaja, Factura
-from apps.pedidos.models import Estado, Pedido
+from apps.pedidos.models import Estado
 from apps.pedidos.services import crear_pedido
 
 from .base import HOY, DatosCajaMixin
@@ -82,9 +82,11 @@ class FacturacionAlCerrarPedidoTests(DatosCajaMixin, TestCase):
         pedido = crear_pedido(self.cliente, 1, "", [(self.pasta, 2)])
         self.client.force_login(self.mesero)
         for _ in range(3):
-            self.avanzar(pedido); pedido.refresh_from_db()
+            self.avanzar(pedido)
+            pedido.refresh_from_db()
         self.assertFalse(Factura.objects.exists())
-        self.avanzar(pedido); pedido.refresh_from_db()       # servido -> cerrado
+        self.avanzar(pedido)       # servido -> cerrado
+        pedido.refresh_from_db()
         self.assertEqual(pedido.estado, Estado.CERRADO)
         factura = Factura.objects.get()
         self.assertEqual((factura.pedido, factura.total, factura.emitida_por), (pedido, Decimal("56000"), self.mesero))
