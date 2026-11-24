@@ -3,7 +3,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from apps.comun.views import salud
+
 urlpatterns = [
+    path("salud/", salud, name="salud"),
     path("admin/", admin.site.urls),
     path("menu/", include("apps.menu.urls")),
     path("pedidos/", include("apps.pedidos.urls")),

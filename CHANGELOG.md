@@ -6,6 +6,10 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Añadido
+- Endpoint público `/salud/` (solo lectura) que responde `{"estado": "ok"}` si la aplicación y la base de datos funcionan, o 503 si la base falla, sin exponer detalles internos. Queda exento de la redirección a https para las comprobaciones del balanceador y las pruebas de humo del pipeline.
+- 4 pruebas nuevas (247 en total).
+
 ## [1.1.0] - 2026-11-04
 
 ### Añadido
