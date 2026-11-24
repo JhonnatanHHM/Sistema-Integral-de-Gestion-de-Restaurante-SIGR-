@@ -112,10 +112,21 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = env("DJANGO_SSL_REDIRECT", "1") == "1"
     SECURE_REDIRECT_EXEMPT = [r"^salud/$"]       # las comprobaciones de salud del balanceador llegan por http
     SECURE_HSTS_SECONDS = int(env("DJANGO_HSTS_SECONDS", "31536000"))
-    STORAGES = {
-        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
-    }
+
+# Dónde se guardan las fotos subidas. Por defecto en disco (carpeta media/). Con SIGR_MEDIA_EN_BD=1 van a la base de datos:
+# necesario en contenedores sin disco persistente (plan gratuito de Render), donde el disco se borra en cada despliegue.
+STORAGES = {
+    "default": {
+        "BACKEND": "apps.comun.almacenamiento.AlmacenEnBaseDeDatos"
+        if env("SIGR_MEDIA_EN_BD", "0") == "1"
+        else "django.core.files.storage.FileSystemStorage"
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+        if DEBUG
+        else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    },
+}
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
