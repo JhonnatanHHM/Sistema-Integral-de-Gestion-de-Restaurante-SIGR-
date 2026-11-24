@@ -98,6 +98,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 200
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in env("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
+RENDER_HOST = env("RENDER_EXTERNAL_HOSTNAME")     # Render define el dominio público del servicio en esta variable
+if RENDER_HOST:
+    ALLOWED_HOSTS.append(RENDER_HOST)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_HOST}")
 if env("DJANGO_BEHIND_PROXY", "0") == "1":      # detrás de nginx u otro proxy que termina HTTPS
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 if not DEBUG:
