@@ -15,3 +15,5 @@ logs/
 htmlcov/
 .ruff_cache/
 informe-cobertura.txt
+carga/resultado_*.csv
+carga/resumen.txt
