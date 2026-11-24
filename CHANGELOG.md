@@ -7,6 +7,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 ## [Sin publicar]
 
 ### Añadido
+- Compatibilidad con Render: el dominio de `RENDER_EXTERNAL_HOSTNAME` se acepta automáticamente como host permitido y origen de confianza de CSRF.
 - Endpoint público `/salud/` (solo lectura) que responde `{"estado": "ok"}` si la aplicación y la base de datos funcionan, o 503 si la base falla, sin exponer detalles internos. Queda exento de la redirección a https para las comprobaciones del balanceador y las pruebas de humo del pipeline.
 - 4 pruebas nuevas (247 en total).
 - Empaquetado con Docker: `Dockerfile` en dos etapas con usuario sin privilegios, estilos y estáticos generados al construir, `HEALTHCHECK` sobre `/salud/` y arranque con migraciones automáticas (`docker/entrypoint.sh`); `docker-compose.yml` con la aplicación y PostgreSQL como staging simulado; `.dockerignore`.
