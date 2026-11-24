@@ -6,6 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.4.0] - 2026-11-24
+
+### Cambiado
+- Entrega continua desde `main`: cada merge de un release a `main` publica la imagen (`sha-<commit>` y `latest`) y la despliega a Render con la aprobación manual del entorno `produccion` intacta. El tag `vX.Y.Z` ya no reconstruye ni vuelve a desplegar: etiqueta como `X.Y.Z` la misma imagen que salió de `main` con ese commit, y solo la reconstruye si no existe. El rollback por ejecución manual sigue igual.
+- La imagen configurada del servicio en Render pasa a ser `latest`, de modo que un reinicio o redespliegue usa siempre lo último publicado (antes quedaba fijada a una versión y un reinicio volvía atrás).
+
 ## [1.3.0] - 2026-11-24
 
 ### Añadido
