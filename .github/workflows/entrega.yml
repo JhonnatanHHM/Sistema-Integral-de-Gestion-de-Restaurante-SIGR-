@@ -1,11 +1,12 @@
 name: Entrega continua
 
 # dev  -> staging simulado: construye la imagen, la levanta con PostgreSQL y le aplica una prueba de carga.
-# tag vX.Y.Z -> publica la imagen en GHCR y la despliega a producción (Render) tras una aprobación manual.
+# main -> publica la imagen en GHCR (:latest y :sha-<commit>) y la despliega a producción (Render) tras una aprobación manual.
+# tag vX.Y.Z -> le pone a esa misma imagen la etiqueta de versión (:X.Y.Z); no vuelve a desplegar.
 # ejecución manual -> vuelve a desplegar una versión ya publicada (rollback).
 on:
   push:
-    branches: [dev]
+    branches: [dev, main]
     tags: ["v*.*.*"]
   workflow_dispatch:
     inputs:
@@ -80,7 +81,7 @@ jobs:
 
   publicar:
     name: publicar-imagen
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -89,27 +90,42 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Construir y publicar la imagen en GHCR (versión y latest)
+      - name: Publicar la imagen en GHCR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
           imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr-restaurante"
+          sha="sha-${GITHUB_SHA:0:12}"
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            # Un tag de versión no reconstruye: etiqueta la imagen que ya salió de main con ese mismo commit.
+            version="${GITHUB_REF_NAME#v}"
+            if docker pull "${imagen}:${sha}"; then
+              docker tag "${imagen}:${sha}" "${imagen}:${version}"
+              docker push "${imagen}:${version}"
+              echo "Versión ${version} etiquetada sobre ${imagen}:${sha}" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "::warning::No existe ${imagen}:${sha}; se construye la imagen de la versión desde el tag."
+            docker build -t "${imagen}:${version}" .
+            docker push "${imagen}:${version}"
+            exit 0
+          fi
+
           docker build \
             --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
-            --label "org.opencontainers.image.version=${version}" \
             --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
-            -t "${imagen}:${version}" -t "${imagen}:latest" .
-          docker push "${imagen}:${version}"
+            -t "${imagen}:${sha}" -t "${imagen}:latest" .
+          docker push "${imagen}:${sha}"
           docker push "${imagen}:latest"
-          echo "Imagen publicada: ${imagen}:${version}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Imagen publicada: ${imagen}:${sha} (y latest)" >> "$GITHUB_STEP_SUMMARY"
 
   desplegar:
     name: desplegar-produccion
     needs: publicar
-    # Se ejecuta tras publicar (tag) o directamente al volver a una versión (ejecución manual).
-    if: ${{ !cancelled() && (needs.publicar.result == 'success' || needs.publicar.result == 'skipped') && (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') }}
+    # Se ejecuta tras publicar desde main, o directamente al volver a una versión (ejecución manual).
+    if: ${{ !cancelled() && (needs.publicar.result == 'success' || needs.publicar.result == 'skipped') && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
@@ -122,8 +138,8 @@ jobs:
     steps:
       - name: Desplegar la versión en Render
         run: |
-          version="${VERSION_MANUAL:-${GITHUB_REF_NAME#v}}"
-          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr-restaurante:${version}"
+          etiqueta="${VERSION_MANUAL:-sha-${GITHUB_SHA:0:12}}"      # manual: una versión publicada; desde main: el commit recién publicado
+          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr-restaurante:${etiqueta}"
           if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
             echo "::warning::Falta el secreto RENDER_DEPLOY_HOOK_URL: no se desplegó ${imagen}."
             exit 0
@@ -131,7 +147,7 @@ jobs:
           codificada=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$imagen")
           echo "Desplegando ${imagen}"
           curl -fsS -X POST "${RENDER_DEPLOY_HOOK_URL}&imgURL=${codificada}"
-          echo "Versión solicitada: ${version}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Imagen solicitada: ${etiqueta}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Esperar a que producción responda (el plan gratuito tarda en despertar)
         run: |

@@ -208,16 +208,18 @@ El flujo `.github/workflows/entrega.yml` automatiza la entrega:
 | Disparador | Qué hace |
 |---|---|
 | Push a `dev` | Construye la imagen, levanta el staging simulado (`docker-compose.yml`), verifica `/salud/` y ejecuta la prueba de carga (Locust: 20 usuarios, 30 s). Falla si el percentil 95 supera 1000 ms o los fallos superan el 1 % |
-| Tag `vX.Y.Z` | Publica `ghcr.io/<propietario>/sigr-restaurante:X.Y.Z` y `latest`; después pide **aprobación manual** (entorno `produccion`), despliega la versión en Render con el *deploy hook* y espera a que `/salud/` responda |
+| Push a `main` (merge de un release) | Publica `ghcr.io/<propietario>/sigr-restaurante:sha-<commit>` y `latest`; después pide **aprobación manual** (entorno `produccion`), despliega esa imagen en Render con el *deploy hook* y espera a que `/salud/` responda |
+| Tag `vX.Y.Z` | Le pone a la imagen ya publicada desde `main` la etiqueta `X.Y.Z` (sin reconstruir ni volver a desplegar), para versiones fijas y rollbacks |
 | Ejecución manual | Vuelve a desplegar una versión ya publicada (rollback) |
 
 Configuración necesaria (una sola vez):
 - Entornos `staging` y `produccion` en *Settings → Environments*; `produccion` con revisores obligatorios.
 - Secreto `RENDER_DEPLOY_HOOK_URL` (URL del *deploy hook* del servicio en Render) y variable `RENDER_URL` (dirección pública del servicio). Sin el secreto el flujo publica la imagen y avisa, pero no despliega.
+- La imagen configurada del servicio en Render debe ser `ghcr.io/<propietario>/sigr-restaurante:latest`: así un reinicio vuelve a la última versión desplegada. (Un servicio creado desde «Existing Image» no tiene Auto-Deploy; el único disparador es el *deploy hook*.)
 - El paquete `sigr-restaurante` de GHCR debe ser público para que Render lo descargue sin credenciales.
 
 ### Rollback
-*Actions → Entrega continua → Run workflow*, con el número de la versión estable anterior (por ejemplo `1.1.0`). Pasa por la misma aprobación manual y vuelve a desplegar esa imagen, que sigue en GHCR. Si la nueva versión incluyó migraciones de base de datos no reversibles, restaura antes la copia de seguridad (ver más abajo).
+*Actions → Entrega continua → Run workflow*, con el número de la versión estable anterior (por ejemplo `1.1.0`). Pasa por la misma aprobación manual y vuelve a desplegar esa imagen, que sigue en GHCR. Ojo: la imagen configurada del servicio sigue siendo `latest`, así que un reinicio posterior vuelve a la última versión; para fijar la anterior de forma duradera hay que cambiar también la imagen configurada en Render. Si la nueva versión incluyó migraciones de base de datos no reversibles, restaura antes la copia de seguridad (ver más abajo).
 
 ---
 
