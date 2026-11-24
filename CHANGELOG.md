@@ -11,7 +11,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 - 4 pruebas nuevas (247 en total).
 - Empaquetado con Docker: `Dockerfile` en dos etapas con usuario sin privilegios, estilos y estáticos generados al construir, `HEALTHCHECK` sobre `/salud/` y arranque con migraciones automáticas (`docker/entrypoint.sh`); `docker-compose.yml` con la aplicación y PostgreSQL como staging simulado; `.dockerignore`.
 - Los archivos estáticos se sirven con WhiteNoise en producción (dependencia `whitenoise`).
-- Flujo `calidad` con cinco jobs en paralelo: `lint` (ruff), `seguridad-codigo` (bandit), `dependencias` (pip-audit), `cobertura` (coverage con umbral mínimo del 90 %, informe en el resumen del PR y como artefacto) y `escaneo-imagen` (Trivy sobre la imagen Docker, falla con vulnerabilidades altas o críticas con corrección disponible).
+- Flujo `calidad` con cinco jobs en paralelo: `lint` (ruff), `seguridad-codigo` (bandit), `dependencias` (pip-audit), `cobertura` (coverage con umbral mínimo del 90 %, informe en el resumen del PR y como artefacto) y `escaneo-imagen` (Grype sobre la imagen Docker, falla con vulnerabilidades altas o críticas con corrección disponible; la acción va fijada a un commit exacto porque se descartó `trivy-action` tras el ataque a su cadena de suministro de marzo de 2026).
 - `pyproject.toml` con la configuración de ruff, bandit y coverage, y `requirements-dev.txt` con las herramientas.
 - Flujo de GitHub Actions `imagen`: construye la imagen, levanta el staging simulado y ejecuta una prueba de humo en cada pull request.
 

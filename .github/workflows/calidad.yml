@@ -109,10 +109,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Construir la imagen
         run: docker build -t sigr:escaneo .
-      - name: Escanear vulnerabilidades de la imagen (Trivy)
-        uses: aquasecurity/trivy-action@0.28.0
+      # Grype (Anchore). La acción se fija al commit exacto de una versión publicada y probada (v7.4.2) y no a un tag:
+      # los tags se pueden reescribir, como pasó con trivy-action en el ataque a la cadena de suministro de marzo de 2026.
+      - name: Escanear vulnerabilidades de la imagen (Grype)
+        uses: anchore/scan-action@27805bf3b4e84b4a5c980df22ed233c00390a439   # v7.4.2
         with:
-          image-ref: sigr:escaneo
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          exit-code: "1"
+          image: sigr:escaneo
+          severity-cutoff: high
+          only-fixed: true
+          fail-build: true
