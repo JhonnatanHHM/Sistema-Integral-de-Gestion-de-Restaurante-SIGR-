@@ -14,7 +14,12 @@ from apps.usuarios.mixins import AdministradorRequeridoMixin, PersonalRequeridoM
 from .forms import FORMATO_FECHA, CierreCajaForm, RangoFechasForm
 from .models import CierreCaja, Factura
 from .services import (
-    cerrar_caja, pedidos_activos_del_dia, platos_mas_vendidos, totales_del_rango, ventas_del_dia, ventas_por_dia,
+    cerrar_caja,
+    pedidos_activos_del_dia,
+    platos_mas_vendidos,
+    totales_del_rango,
+    ventas_del_dia,
+    ventas_por_dia,
 )
 
 

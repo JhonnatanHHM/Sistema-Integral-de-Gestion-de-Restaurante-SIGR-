@@ -6,8 +6,15 @@ from django.test import TestCase
 
 from apps.caja.models import CierreCaja, Factura
 from apps.caja.services import (
-    CajaCerrada, caja_cerrada, cerrar_caja, emitir_factura, pedidos_activos_del_dia, platos_mas_vendidos,
-    totales_del_rango, ventas_del_dia, ventas_por_dia,
+    CajaCerrada,
+    caja_cerrada,
+    cerrar_caja,
+    emitir_factura,
+    pedidos_activos_del_dia,
+    platos_mas_vendidos,
+    totales_del_rango,
+    ventas_del_dia,
+    ventas_por_dia,
 )
 from apps.pedidos.services import crear_pedido
 

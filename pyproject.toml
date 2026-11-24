@@ -1,0 +1,26 @@
+# Configuración de las herramientas de calidad y seguridad del pipeline (ver .github/workflows/calidad.yml).
+
+[tool.ruff]
+line-length = 160
+target-version = "py312"
+extend-exclude = ["staticfiles", "media", "**/migrations/*"]
+
+[tool.ruff.lint]
+# E/W: estilo pycodestyle · F: errores y código sin uso · I: imports ordenados · B: errores probables · UP: sintaxis moderna
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*.py" = ["E501"]                 # las pruebas llevan cargas hostiles completas en una sola línea
+"config/settings_*.py" = ["F403", "F405"]     # `from .settings import *` es el patrón buscado en las configuraciones derivadas
+
+[tool.bandit]
+exclude_dirs = ["*/tests/*", "*/tests", "*/migrations/*", "*/.venv/*"]
+
+[tool.coverage.run]
+source = ["apps", "config"]
+omit = ["*/migrations/*", "*/tests/*", "*/tests.py", "config/settings_test.py", "config/settings_ci.py", "config/asgi.py", "manage.py"]
+
+[tool.coverage.report]
+fail_under = 90                     # umbral mínimo del pipeline: por debajo, el job falla
+show_missing = true
+skip_covered = true

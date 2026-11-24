@@ -1,0 +1,118 @@
+name: Calidad y seguridad
+
+on:
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: calidad-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Análisis estático de estilo y errores (ruff)
+        run: ruff check . --output-format github
+
+  seguridad-codigo:
+    name: seguridad-codigo
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Análisis de seguridad del código (bandit)
+        run: bandit -r apps config -c pyproject.toml
+
+  dependencias:
+    name: dependencias
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Vulnerabilidades conocidas en las dependencias (pip-audit)
+        run: pip-audit -r requirements-prod.txt
+
+  cobertura:
+    name: cobertura
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sigr_app
+          POSTGRES_PASSWORD: sigr_ci
+          POSTGRES_DB: sigr
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sigr_app -d sigr"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DB_NAME: sigr
+      DB_USER: sigr_app
+      DB_PASSWORD: sigr_ci
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DJANGO_SECRET_KEY: clave-solo-para-integracion-continua
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Pruebas con medición de cobertura
+        run: coverage run manage.py test --settings=config.settings_ci
+      - name: Informe y umbral mínimo (falla si la cobertura baja del umbral)
+        run: |
+          coverage report | tee informe-cobertura.txt
+          echo '### Cobertura de pruebas' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat informe-cobertura.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: informe-cobertura
+          path: informe-cobertura.txt
+
+  escaneo-imagen:
+    name: escaneo-imagen
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir la imagen
+        run: docker build -t sigr:escaneo .
+      - name: Escanear vulnerabilidades de la imagen (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: sigr:escaneo
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"

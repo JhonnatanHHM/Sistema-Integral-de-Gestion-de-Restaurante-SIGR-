@@ -10,7 +10,7 @@ from apps.comun.views import FiltrosEnPaginacionMixin
 from apps.usuarios.mixins import ClienteRequeridoMixin, PersonalRequeridoMixin
 
 from .forms import CambioEstadoReservaForm, FiltroReservaForm, ReservaForm
-from .models import VIGENTES, EstadoReserva, Reserva
+from .models import VIGENTES, Reserva
 from .services import ReservaNoDisponible, crear_reserva
 
 

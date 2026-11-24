@@ -143,7 +143,7 @@ class BarridoDeFormulariosTests(EntornoMixin, TestCase):
         navegador.force_login(self.cliente)
         for indice, carga in enumerate(CARGAS):
             respuesta = navegador.post(reverse("reservas:nueva"), {
-                "fecha": "2026-11-%02d" % (11 + indice % 15), "hora": "13:00", "personas": "2", "mesa": "3", "notas": carga,
+                "fecha": f"2026-11-{11 + indice % 15:02d}", "hora": "13:00", "personas": "2", "mesa": "3", "notas": carga,
             })
             self.assertIn(respuesta.status_code, (200, 302), carga[:25])
         self.assertEqual(Reserva.objects.filter(notas__contains="<").count(), 0)

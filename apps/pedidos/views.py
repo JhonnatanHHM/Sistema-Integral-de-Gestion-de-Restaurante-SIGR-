@@ -12,7 +12,7 @@ from apps.comun.views import FiltrosEnPaginacionMixin
 from apps.usuarios.mixins import PersonalRequeridoMixin
 
 from .forms import CambioEstadoForm, FiltroPedidoForm, PedidoForm
-from .models import Estado, Pedido, SIGUIENTE
+from .models import SIGUIENTE, Estado, Pedido
 from .services import crear_pedido
 
 
