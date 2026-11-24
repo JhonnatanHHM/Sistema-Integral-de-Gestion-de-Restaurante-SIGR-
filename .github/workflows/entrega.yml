@@ -94,7 +94,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version="${GITHUB_REF_NAME#v}"
-          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr"
+          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr-restaurante"
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           docker build \
             --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
@@ -123,7 +123,7 @@ jobs:
       - name: Desplegar la versión en Render
         run: |
           version="${VERSION_MANUAL:-${GITHUB_REF_NAME#v}}"
-          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr:${version}"
+          imagen="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/sigr-restaurante:${version}"
           if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
             echo "::warning::Falta el secreto RENDER_DEPLOY_HOOK_URL: no se desplegó ${imagen}."
             exit 0

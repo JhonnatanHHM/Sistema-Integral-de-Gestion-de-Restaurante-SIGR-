@@ -6,6 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.2.1] - 2026-11-24
+
+### Corregido
+- La publicación de la imagen en GHCR fallaba con `denied` al enviar el manifiesto de la v1.2.0, porque en la cuenta ya existía un paquete llamado `sigr` creado por otro repositorio y sin permiso para este flujo. La imagen pasa a llamarse `ghcr.io/<propietario>/sigr-restaurante`. La v1.2.0 quedó publicada sin imagen; la v1.2.1 es la primera con imagen en GHCR.
+
 ## [1.2.0] - 2026-11-24
 
 **Pipeline CI/CD del SIGR:** empaquetado, calidad y seguridad automatizadas, entrega continua y soporte para desplegar en Render. Sin cambios en las funciones del restaurante.
