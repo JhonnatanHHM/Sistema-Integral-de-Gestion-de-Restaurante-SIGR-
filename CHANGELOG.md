@@ -6,6 +6,14 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.4.2] - 2026-11-24
+
+### Cambiado
+- Los checks `lint`, `seguridad-codigo`, `dependencias`, `cobertura`, `escaneo-imagen` e `imagen` pasan a ser obligatorios para fusionar en `dev` y en `main`, junto con `origen-permitido` y `pruebas`.
+
+### Documentación
+- README con insignias de estado, descripción del pipeline CI/CD y enlaces a producción, ejecuciones, versiones e imagen en GHCR, con el aviso sobre el reposo del plan gratuito de Render y sobre las fotos en base de datos.
+
 ## [1.4.1] - 2026-11-24
 
 ### Corregido
