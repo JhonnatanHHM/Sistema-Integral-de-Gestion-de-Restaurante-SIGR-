@@ -6,6 +6,13 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.4.1] - 2026-11-24
+
+### Corregido
+- Las fotos de los platos subidas por el formulario salían rotas en producción (404 en `/media/...`). Con `DEBUG=0` Django no sirve `/media/`, y además el disco de un contenedor como el del plan gratuito de Render se borra en cada reinicio o despliegue. Ahora, con `SIGR_MEDIA_EN_BD=1` (activada en la imagen Docker), las fotos se guardan en la base de datos mediante un almacenamiento propio (`AlmacenEnBaseDeDatos`, tabla `comun_archivomedia`) y se sirven en `/media/` con caché de una semana. No usa buckets ni disco persistente; modelos, formularios y plantillas no cambian. El almacenamiento en disco sigue siendo el predeterminado fuera de Docker.
+- Las fotos que se habían subido antes a producción estaban en el disco efímero y se perdieron: hay que volver a subirlas.
+- 10 pruebas nuevas (262 en total), incluida la subida de una foto por el formulario del administrador y su visualización en la carta pública.
+
 ## [1.4.0] - 2026-11-24
 
 ### Cambiado

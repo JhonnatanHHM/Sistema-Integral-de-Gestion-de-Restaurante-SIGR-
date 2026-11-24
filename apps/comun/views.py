@@ -1,5 +1,5 @@
 from django.db import DatabaseError, connection
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.views.decorators.http import require_safe
 
 
@@ -25,3 +25,21 @@ def salud(request):
     except DatabaseError:
         return JsonResponse({"estado": "error", "base_de_datos": "no disponible"}, status=503)
     return JsonResponse({"estado": "ok", "base_de_datos": "ok"})
+
+
+@require_safe
+def servir_media(request, nombre):
+    """Entrega una foto guardada en la base de datos (ver apps.comun.almacenamiento). Si no existe, 404.
+
+    El nombre solo se usa como clave de búsqueda, nunca como ruta de disco. Las fotos se guardan con un nombre aleatorio
+    y una foto reemplazada recibe un nombre nuevo, así que se pueden guardar en caché durante una semana.
+    """
+    from .models import ArchivoMedia
+
+    try:
+        archivo = ArchivoMedia.objects.get(nombre=nombre)
+    except ArchivoMedia.DoesNotExist:
+        raise Http404("Archivo no encontrado.") from None
+    respuesta = HttpResponse(bytes(archivo.contenido), content_type=archivo.tipo)
+    respuesta["Cache-Control"] = "public, max-age=604800"
+    return respuesta
