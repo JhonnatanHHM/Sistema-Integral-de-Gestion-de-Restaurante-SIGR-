@@ -16,6 +16,7 @@ SOLO_CLIENTE = {Rol.CLIENTE}
 # Rutas sin parámetros: nombre -> roles que pueden abrirlas (GET).
 RUTAS = {
     "inicio": TODOS,
+    "salud": TODOS,                           # comprobación de salud: pública y de solo lectura
     "menu:publico": TODOS,
     "usuarios:login": {VISITANTE},            # con sesión iniciada redirige al inicio
     "usuarios:registro": {VISITANTE},
