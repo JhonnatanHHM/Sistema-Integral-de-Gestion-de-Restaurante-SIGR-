@@ -36,6 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",       # sirve los archivos estáticos en producción
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -107,6 +108,10 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = env("DJANGO_SSL_REDIRECT", "1") == "1"
     SECURE_REDIRECT_EXEMPT = [r"^salud/$"]       # las comprobaciones de salud del balanceador llegan por http
     SECURE_HSTS_SECONDS = int(env("DJANGO_HSTS_SECONDS", "31536000"))
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    }
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]

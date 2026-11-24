@@ -181,6 +181,24 @@ Abrir `https://sigr.ejemplo.com/` (debe cargar con estilos), iniciar sesión com
 
 ---
 
+## C. Contenedor Docker (staging simulado)
+
+El repositorio incluye un `Dockerfile` (imagen de producción en dos etapas) y un `docker-compose.yml` con la aplicación y PostgreSQL:
+
+```
+docker compose up --build        # aplicación en http://localhost:8000
+curl http://localhost:8000/salud/
+docker compose down -v
+```
+
+- Al arrancar, el contenedor aplica las migraciones (`docker/entrypoint.sh`); con `SIGR_CARGAR_DEMO=1` carga además el menú de demostración.
+- Variables útiles: `PORT` (puerto de escucha), `WEB_CONCURRENCY` (procesos de gunicorn) y las de la sección «Variables de entorno».
+- El compose es solo para pruebas en http: desactiva la redirección a https y HSTS. En un despliegue real se dejan activas.
+- Los estáticos se generan al construir la imagen y se sirven con WhiteNoise; las fotos subidas (`media/`) no se guardan en la imagen: en un contenedor sin volumen se pierden al reiniciar.
+- La imagen se construye y se prueba automáticamente en cada pull request (flujo `imagen`).
+
+---
+
 ## Actualizar a una versión nueva
 ```bash
 cd /opt/sigr/app
