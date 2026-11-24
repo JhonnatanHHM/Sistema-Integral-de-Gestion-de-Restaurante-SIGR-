@@ -1,5 +1,5 @@
 <header class="encabezado">
-  <a class="marca" href="{% url 'inicio' %}"><span class="marca__icono">✕</span> SIGR</a>
+  <a class="marca" href="{% url 'inicio' %}" aria-label="SIGR, inicio">{% include "includes/logo.html" %}<span class="marca__nombre">SIGR</span></a>
   <nav class="menu" aria-label="Principal">
     <a class="menu__enlace {% if seccion == 'inicio' %}menu__enlace--activo{% endif %}" href="{% url 'inicio' %}">Inicio</a>
     <a class="menu__enlace {% if seccion == 'menu' %}menu__enlace--activo{% endif %}" href="{% url 'menu:publico' %}">Menú</a>

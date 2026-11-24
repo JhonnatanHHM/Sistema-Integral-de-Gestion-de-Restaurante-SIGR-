@@ -113,3 +113,20 @@ class PlatosDestacadosTests(MediaTemporalMixin, TestCase):
     def test_los_textos_se_muestran_escapados(self):
         self.plato("Seguro", destacado=True, descripcion="Rico & sano")
         self.assertContains(self.client.get(reverse("inicio")), "Rico &amp; sano")
+
+
+class EncabezadoTests(TestCase):
+    def test_el_encabezado_muestra_el_logo_y_el_nombre(self):
+        html = self.client.get(reverse("inicio")).content.decode()
+        self.assertIn('class="marca__logo"', html)
+        self.assertIn('class="marca__nombre">SIGR<', html)
+        self.assertNotIn("✕", html)
+
+    def test_el_css_evita_el_desplazamiento_lateral_en_celulares(self):
+        from pathlib import Path
+
+        from django.conf import settings
+
+        css = Path(settings.BASE_DIR, "static", "css", "sigr.css").read_text(encoding="utf-8")
+        self.assertIn("overflow-x: clip", css)
+        self.assertIn("flex-wrap: wrap", css)
