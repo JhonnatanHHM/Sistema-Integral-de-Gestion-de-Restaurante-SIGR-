@@ -128,5 +128,5 @@ class EncabezadoTests(TestCase):
         from django.conf import settings
 
         css = Path(settings.BASE_DIR, "static", "css", "sigr.css").read_text(encoding="utf-8")
-        self.assertIn("overflow-x: clip", css)
-        self.assertIn("flex-wrap: wrap", css)
+        self.assertIn("overflow-x:clip", css)
+        self.assertIn("flex-wrap:wrap", css)
