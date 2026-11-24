@@ -6,6 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.3.0] - 2026-11-24
+
+### Añadido
+- Comando `crear_admin_inicial`: crea el primer administrador desde `SIGR_ADMIN_EMAIL` y `SIGR_ADMIN_PASSWORD` (más `SIGR_ADMIN_NOMBRE` y `SIGR_ADMIN_APELLIDO`, opcionales). Valida correo, nombre y contraseña con los mismos validadores del sistema, es idempotente y nunca modifica ni asciende una cuenta existente. El contenedor lo ejecuta al arrancar si las variables están definidas, lo que permite tener un administrador en despliegues sin terminal (plan gratuito de Render). Si falla, avisa en el registro y el servicio arranca igual.
+- 5 pruebas nuevas (252 en total).
+
 ## [1.2.1] - 2026-11-24
 
 ### Corregido

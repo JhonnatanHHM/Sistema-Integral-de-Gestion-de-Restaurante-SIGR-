@@ -24,6 +24,7 @@ Se leen del archivo `.env` (en la carpeta del proyecto) o del entorno del sistem
 | `DJANGO_DEBUG` | No | `1` en desarrollo (por defecto); **`0` en producción** |
 | `DJANGO_ALLOWED_HOSTS` | Sí en producción | Dominios permitidos, separados por comas |
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Sí en producción | Orígenes con https que envían formularios, p. ej. `https://sigr.ejemplo.com` |
+| `SIGR_ADMIN_EMAIL`, `SIGR_ADMIN_PASSWORD` | No | Si están definidas, el contenedor crea el administrador inicial al arrancar (`crear_admin_inicial`, idempotente: nunca pisa una cuenta existente). Pensado para despliegues sin terminal, como el plan gratuito de Render. La contraseña debe cumplir los validadores de Django. `SIGR_ADMIN_NOMBRE` y `SIGR_ADMIN_APELLIDO` son opcionales |
 | `RENDER_EXTERNAL_HOSTNAME` | No | Lo define Render solo; se agrega a `DJANGO_ALLOWED_HOSTS` y a los orígenes de confianza de CSRF (https) |
 | `DJANGO_BEHIND_PROXY` | Con nginx | `1` si el proxy termina el HTTPS y envía `X-Forwarded-Proto` |
 | `DJANGO_SSL_REDIRECT` | No | Redirigir http→https; `1` por defecto con `DJANGO_DEBUG=0` |
