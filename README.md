@@ -1,5 +1,7 @@
 # SIGR · Sistema Integral de Gestión de Restaurante
 
+[![Pruebas](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/pruebas.yml/badge.svg?branch=main)](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/pruebas.yml) [![Calidad y seguridad](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/calidad.yml/badge.svg?branch=main)](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/calidad.yml) [![Imagen Docker](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/imagen.yml/badge.svg?branch=main)](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/imagen.yml) [![Entrega continua](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/entrega.yml/badge.svg?branch=main)](https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions/workflows/entrega.yml)
+
 Aplicación web para gestionar pedidos, reservas, administración de menús, control de caja y generación de reportes.
 
 Proyecto de la materia *Gestión del Software* (Tecnológica del Oriente). Su primer hito estable es la **línea base v1.0.0**: ver [docs/linea-base.md](docs/linea-base.md).
@@ -83,10 +85,34 @@ El CSS compilado (`static/css/sigr.css`) se versiona; recompílalo y súbelo cua
 .venv\Scripts\python manage.py test --settings=config.settings_test   # rápidas, SQLite en memoria
 .venv\Scripts\python manage.py test --settings=config.settings_ci     # sobre PostgreSQL (lo mismo que el CI)
 ```
-Incluyen pruebas unitarias por módulo y pruebas de integración de extremo a extremo (`apps/integracion`). En GitHub, el flujo `pruebas` las ejecuta en cada Pull Request y su resultado es obligatorio para fusionar. Para una revisión a mano, ver [docs/verificacion-manual.md](docs/verificacion-manual.md).
+Incluyen pruebas unitarias por módulo y pruebas de integración de extremo a extremo (`apps/integracion`). En GitHub, el flujo `pruebas` las ejecuta en cada Pull Request y su resultado es obligatorio para fusionar (junto con los de calidad y seguridad). Para una revisión a mano, ver [docs/verificacion-manual.md](docs/verificacion-manual.md).
+
+## Pipeline CI/CD
+
+Cada cambio recorre un pipeline en GitHub Actions antes de llegar a producción:
+
+| Etapa | Flujo | Qué comprueba |
+|---|---|---|
+| Guardia de ramas | `guardia-ramas.yml` | A `main` solo se llega desde `dev`; a `dev`, desde ramas con prefijo permitido |
+| Pruebas | `pruebas.yml` | Suite completa sobre PostgreSQL 16 |
+| Calidad y seguridad | `calidad.yml` | `lint` (ruff), `seguridad-codigo` (bandit), `dependencias` (pip-audit), `cobertura` (mínimo 90 %) y `escaneo-imagen` (Grype) |
+| Imagen | `imagen.yml` | Construye la imagen Docker y comprueba su arranque |
+| Entrega | `entrega.yml` | `dev` despliega a *staging* y corre la prueba de carga (Locust); `main` publica la imagen en GHCR y la despliega a producción con **aprobación manual**; reversión manual por versión |
+
+Los ocho checks (`origen-permitido`, `pruebas`, `lint`, `seguridad-codigo`, `dependencias`, `cobertura`, `escaneo-imagen` e `imagen`) son obligatorios para fusionar en `dev` y en `main`.
+
+| Recurso | Enlace |
+|---|---|
+| Aplicación en producción (Render) | <https://sigr-restaurante.onrender.com> (estado: <https://sigr-restaurante.onrender.com/salud/>) |
+| Ejecuciones del pipeline | <https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/actions> |
+| Versiones publicadas | <https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/releases> |
+| Imagen Docker (GHCR) | <https://github.com/JhonnatanHHM/Sistema-Integral-de-Gestion-de-Restaurante-SIGR-/pkgs/container/sigr-restaurante> |
+| Manual de entrega y reversión | [docs/despliegue.md](docs/despliegue.md) |
+
+> **Aviso:** la aplicación corre en el plan gratuito de Render, que la duerme cuando no se usa. Al abrir el enlace puede tardar entre 5 y 10 minutos en volver a responder. Las fotos de los platos se guardan en la base de datos por simplicidad y por los recursos gratuitos del despliegue; en un sistema real irían en un almacenamiento de objetos.
 
 ## Flujo de trabajo y versionado
-`rama nueva → dev → main`, siempre por Pull Request, con los checks `origen-permitido` y `pruebas` obligatorios. Commits en formato Conventional Commits y versiones con SemVer (tags `vX.Y.Z`). Ver [CONTRIBUTING.md](CONTRIBUTING.md) y [CHANGELOG.md](CHANGELOG.md).
+`rama nueva → dev → main`, siempre por Pull Request, con los checks `origen-permitido`, `pruebas`, `lint`, `seguridad-codigo`, `dependencias`, `cobertura`, `escaneo-imagen` e `imagen` obligatorios. Commits en formato Conventional Commits y versiones con SemVer (tags `vX.Y.Z`). Ver [CONTRIBUTING.md](CONTRIBUTING.md) y [CHANGELOG.md](CHANGELOG.md).
 
 ## Documentación
 
